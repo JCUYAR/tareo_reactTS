@@ -1,6 +1,16 @@
 .myInput {
-    color:azure;
+    background-color: rgb(225, 220, 220);
+    border-color: rgb(207, 201, 201);
+    color:rgb(175, 170, 170);
     border-radius: 5px;
     font-size: 15px;
-    padding: 5px;
+    padding: 6px;
+}
+
+.buttonSubmit {
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 7px;
 }
