@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { LoginFormInterface } from '../../forms/loginForm.types';
 import '../../../app/styles/loginStyles.css';
 import Icon from '../../../shared/ui/Icon';
+import { authenticateService } from '../../../infraestructure/api/authService';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from "yup";
 
 const LoginPage: React.FC = () => {
     const formRefs = {
@@ -11,10 +14,20 @@ const LoginPage: React.FC = () => {
         submit: useRef<HTMLButtonElement>(null)
     }
 
+    const formSchema = Yup.object({
+        userName: Yup.string()
+        .required("El usuario es obligatorio"),
+
+        password: Yup.string()
+        .required("La contraseña es obligatoria")
+    })
+
     const loginFormType: LoginFormInterface = {
         userName: "",
         password: ""
     }
+
+    const navigate  = useNavigate()
 
     const [initialState, setInitalState] = useState(loginFormType)
 
@@ -23,6 +36,7 @@ const LoginPage: React.FC = () => {
         <>
             <Formik
                 initialValues={initialState}
+                validationSchema={formSchema}
                 onSubmit={(values) => {
                     console.log(values);
                 }}
@@ -31,9 +45,26 @@ const LoginPage: React.FC = () => {
                     values,
                     errors,
                     setErrors,
+                    touched,
                     setFieldValue
                 }) => {
+                    const handleSubmit = async () => {
+                        try {
+                            const response = await authenticateService(values);
+                            const token = response.data[0].access_token;
+                            console.log(response)
+                            localStorage.setItem("token", token);
+                            navigate('/dashboard', { replace: true});
+                        } catch (error) {
+                            throw error;
+                        }
+                    }
+
                     useEffect(() => {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            navigate("/dashboard", { replace: true })
+                        }
                         setErrors({})
                     }, [])
                     return (
@@ -62,11 +93,16 @@ const LoginPage: React.FC = () => {
                                             </label>
 
                                             <Field
-                                                className="myInput form-control mx-auto w-50"
+                                                className={`myInput form-control mx-auto w-50 ${errors.userName && touched.userName ? "is-invalid" : ""}`}
                                                 name="userName"
                                                 innerRef={formRefs.userName}
                                                 placeholder="Usuario"
                                             />
+                                            {errors.userName && touched.userName && (
+                                                <div className="invalid-feedback">
+                                                    {errors.userName}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="mb-3 text-center">
@@ -74,12 +110,17 @@ const LoginPage: React.FC = () => {
                                                 Ingrese su contraseña:
                                             </label>
                                             <Field
-                                                className="myInput form-control mx-auto w-50"
+                                                className={`myInput form-control mx-auto w-50 ${errors.password && touched.password ? "is-invalid" : ""}`}
                                                 name="password"
                                                 innerRef={formRefs.password}
                                                 type="password"
                                                 placeholder="Password"
                                             />
+                                            {errors.password && touched.password && (
+                                                <div className="invalid-feedback">
+                                                    {errors.password}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="mb-3 text-center">
@@ -88,9 +129,13 @@ const LoginPage: React.FC = () => {
                                                 name="submit"
                                                 ref={formRefs.submit}
                                                 className="buttonSubmit btn btn-primary mx-auto w-50"
+                                                onClick={() => {
+                                                    handleSubmit();
+                                                }}
                                             >
                                                 Iniciar sesión
                                             </button>
+
                                         </div>
 
 

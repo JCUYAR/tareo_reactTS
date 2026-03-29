@@ -1,7 +1,8 @@
 import axios, {type Method, type AxiosRequestConfig} from "axios";
+import type { BaseResult } from "../../presentation/general/BaseResult";
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.REACT_APP_API_URL || "http:localjost;6767",
+    baseURL: import.meta.env.VITE_API_URL || "http:localjost;6767",
     timeout: 10000,
     headers : {
         'Content-Type': 'application/json'
@@ -31,22 +32,20 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-export async function fetchData<T> (
+export async function fetchData<T>(
     url: string,
     method: Method,
     data?: any,
     config?: AxiosRequestConfig
-): Promise<T> {
-    try {
-        const response = await axiosInstance.request({
-            url,
-            method,
-            data: method === "GET" || method == "DELETE" ? undefined : data,
-            params: method === 'GET' || method === 'DELETE' ? data : undefined,
-            ...config,
-        });
-        return response.data;
-    } catch (error: any) {
-        throw error.response?.data || error.message
-    }
+): Promise<BaseResult<T>> {
+
+    const response = await axiosInstance.request<BaseResult<T>>({
+        url,
+        method,
+        data: method !== "GET" ? data : undefined,
+        params: method === "GET" ? data : undefined,
+        ...config,
+    });
+
+    return response.data;
 }
