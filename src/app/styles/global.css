@@ -1,7 +1,7 @@
 .myInput {
     background-color: rgb(225, 220, 220);
     border-color: rgb(207, 201, 201);
-    color:rgb(175, 170, 170);
+    color:rgb(0, 0, 0);
     border-radius: 5px;
     font-size: 15px;
     padding: 6px;
@@ -13,4 +13,8 @@
     border-radius: 5px;
     font-size: 15px;
     padding: 7px;
+}
+
+.navbarnbs {
+    background-color: goldenrod;
 }

@@ -6,6 +6,7 @@ import Icon from '../../../shared/ui/Icon';
 import { authenticateService } from '../../../infraestructure/api/authService';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
+import { useAuth } from '../../../app/providers/AuthContext';
 
 const LoginPage: React.FC = () => {
     const formRefs = {
@@ -28,6 +29,7 @@ const LoginPage: React.FC = () => {
     }
 
     const navigate  = useNavigate()
+    const { login } = useAuth();
 
     const [initialState, setInitalState] = useState(loginFormType)
 
@@ -38,7 +40,6 @@ const LoginPage: React.FC = () => {
                 initialValues={initialState}
                 validationSchema={formSchema}
                 onSubmit={(values) => {
-                    console.log(values);
                 }}
             >
                 {({
@@ -51,9 +52,10 @@ const LoginPage: React.FC = () => {
                     const handleSubmit = async () => {
                         try {
                             const response = await authenticateService(values);
-                            const token = response.data[0].access_token;
-                            console.log(response)
-                            localStorage.setItem("token", token);
+                            login({
+                                token: response.data[0].access_token,
+                                id: response.data[0].id
+                            });
                             navigate('/dashboard', { replace: true});
                         } catch (error) {
                             throw error;

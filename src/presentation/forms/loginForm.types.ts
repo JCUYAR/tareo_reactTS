@@ -8,4 +8,13 @@ export interface LoginFormInterface {
 
 export interface AuthResponse {
     access_token: string;
+    id: number;
+}
+
+export interface UserData {
+    id: number;
+    username: string;
+    name: string;
+    lName: string;
+    role: string;
 }

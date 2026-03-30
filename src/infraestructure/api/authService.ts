@@ -1,4 +1,4 @@
-import type { AuthResponse, LoginBody } from "../../presentation/forms/loginForm.types"
+import type { AuthResponse, LoginBody, UserData } from "../../presentation/forms/loginForm.types"
 import { fetchData } from "./fetchData";
 
 const authenticateService = (payload: LoginBody) => {
@@ -15,6 +15,15 @@ const authenticateService = (payload: LoginBody) => {
     return response;
 }
 
+const getUserDataById = (id: number) => {
+    const response = fetchData<UserData> (
+        `user/GetUserById/${id}`,
+        "GET"
+    );
+    return response;
+}
+
 export {
-    authenticateService
+    authenticateService,
+    getUserDataById
 }
