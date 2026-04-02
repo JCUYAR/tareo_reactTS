@@ -16,5 +16,9 @@
 }
 
 .navbarnbs {
-    background-color: goldenrod;
+    background-color: #1a1d23;
+}
+
+.navbar-text {
+    color: white
 }

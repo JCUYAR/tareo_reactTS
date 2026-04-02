@@ -62,13 +62,13 @@ const LoginPage: React.FC = () => {
                         }
                     }
 
-                    useEffect(() => {
-                        const token = localStorage.getItem("token");
-                        if (token) {
-                            navigate("/dashboard", { replace: true })
-                        }
-                        setErrors({})
-                    }, [])
+                    // useEffect(() => {
+                    //     const token = localStorage.getItem("token");
+                    //     if (token) {
+                    //         navigate("/dashboard", { replace: true })
+                    //     }
+                    //     setErrors({})
+                    // }, [])
                     return (
                         <div className="container-fluid vh-100">
                             <div className="row h-100">

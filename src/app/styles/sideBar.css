@@ -1,0 +1,278 @@
+/* ─── Variables ─────────────────────────────────────────── */
+:root {
+    --sidebar-width-open:   240px;
+    --sidebar-width-closed:  64px;
+    --sidebar-bg:           #1a1d23;
+    --sidebar-border:       rgba(255,255,255,0.07);
+    --sidebar-text:         #c9cdd6;
+    --sidebar-text-muted:   #6b7280;
+    --sidebar-accent:       #3b82f6;
+    --sidebar-accent-soft:  rgba(59,130,246,0.12);
+    --sidebar-hover-bg:     rgba(255,255,255,0.05);
+    --sidebar-radius:       10px;
+    --sidebar-transition:   0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    --sidebar-top:          0px;
+}
+
+/* ─── Shell ─────────────────────────────────────────────── */
+.sidebar {
+    position: fixed;
+    top: var(--sidebar-top);
+    left: 0;
+    height: calc(100dvh - var(--sidebar-top));
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    z-index: 1045; /* encima del toolbar de Bootstrap (1030) */
+    transition: width var(--sidebar-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+}
+
+.sidebar--open   { width: var(--sidebar-width-open); }
+.sidebar--closed { width: var(--sidebar-width-closed); }
+
+/* ─── Toggle button ─────────────────────────────────────── */
+.sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: 14px auto 4px;
+    flex-shrink: 0;
+    background: var(--sidebar-hover-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
+    color: var(--sidebar-text-muted);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, transform 0.18s;
+}
+.sidebar-toggle-btn:hover {
+    background: var(--sidebar-accent-soft);
+    color: var(--sidebar-accent);
+    transform: scale(1.08);
+}
+
+/* ─── User card ─────────────────────────────────────────── */
+.sidebar-user {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 12px 10px;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.sidebar-user__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.sidebar-user__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--sidebar-accent);
+    object-fit: cover;
+    display: block;
+}
+
+.sidebar-user__status {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2px solid var(--sidebar-bg);
+}
+
+.sidebar-user__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+    animation: fadeSlideIn 0.2s ease;
+}
+
+.sidebar-user__icon {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.sidebar-user__name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-user__role {
+    font-size: 0.72rem;
+    color: var(--sidebar-accent);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sidebar-user__username {
+    font-size: 0.72rem;
+    color: var(--sidebar-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── Divider ───────────────────────────────────────────── */
+.sidebar-divider {
+    height: 1px;
+    background: var(--sidebar-border);
+    margin: 4px 12px;
+    flex-shrink: 0;
+}
+
+/* ─── Nav ───────────────────────────────────────────────── */
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 6px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    border: none;
+    border-radius: var(--sidebar-radius);
+    background: transparent;
+    color: var(--sidebar-text);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: left;
+    white-space: nowrap;
+    transition: background 0.16s, color 0.16s;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-nav__item:hover {
+    background: var(--sidebar-hover-bg);
+    color: #fff;
+}
+
+.sidebar-nav__item--active {
+    background: var(--sidebar-accent-soft);
+    color: var(--sidebar-accent);
+}
+
+.sidebar-nav__item--active:hover {
+    background: rgba(59,130,246,0.18);
+    color: var(--sidebar-accent);
+}
+
+.sidebar-nav__icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-nav__label {
+    flex: 1;
+    animation: fadeSlideIn 0.18s ease;
+}
+
+.sidebar-nav__indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--sidebar-accent);
+    flex-shrink: 0;
+}
+
+/* ─── Spacer & Footer ───────────────────────────────────── */
+.sidebar-spacer { flex: 1; }
+
+.sidebar-footer {
+    padding: 8px 8px 14px;
+    flex-shrink: 0;
+}
+
+.sidebar-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    border: none;
+    border-radius: var(--sidebar-radius);
+    background: transparent;
+    color: #f87171;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.16s, color 0.16s;
+}
+
+.sidebar-logout-btn:hover {
+    background: rgba(248,113,113,0.12);
+    color: #fca5a5;
+}
+
+/* ─── Mobile overlay ────────────────────────────────────── */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1039;
+    backdrop-filter: blur(2px);
+}
+
+/* ─── Animation ─────────────────────────────────────────── */
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Layout helper (add to your page shell) ────────────── */
+.app-layout {
+    display: flex;
+    min-height: 100dvh;
+    padding-top: var(--sidebar-top);
+}
+
+.app-main {
+    flex: 1;
+    transition: margin-left var(--sidebar-transition);
+    min-width: 0;
+}
+
+.app-main--sidebar-open   { margin-left: var(--sidebar-width-open); }
+.app-main--sidebar-closed { margin-left: var(--sidebar-width-closed); }

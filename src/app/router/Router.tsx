@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "../../presentation/pages/loginPage/loginPage";
 import GeneralPage from "../../presentation/pages/generalPage/generalPage";
 import PrivateRoute from "./PrivateRouter";
+import AppLayout from "../toolbar/Applayout";
 
 <BrowserRouter>
   <Routes>
@@ -10,7 +11,7 @@ import PrivateRoute from "./PrivateRouter";
         path="/general" 
         element={
             <PrivateRoute>
-                <GeneralPage />
+                <AppLayout />
             </PrivateRoute>
         } />
   </Routes>

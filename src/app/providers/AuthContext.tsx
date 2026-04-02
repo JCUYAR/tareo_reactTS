@@ -23,6 +23,7 @@ interface UserData {
 interface AuthContextType {
   auth: AuthData | null;
   user: UserData | null;
+  loading: boolean;
   login: (auth: AuthData) => Promise<void>;
   logout: () => void;
 }
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const [auth, setAuth] = useState<AuthData | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem("auth");
@@ -40,7 +42,11 @@ export const AuthProvider = ({ children }: any) => {
     if (stored) {
       const parsed = JSON.parse(stored);
       setAuth(parsed);
-      fetchUser(parsed.id);
+      fetchUser(parsed.id).finally(() => {
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -54,22 +60,26 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const login = async (data: AuthData) => {
+    setLoading(true);
 
     localStorage.setItem("auth", JSON.stringify(data));
     setAuth(data);
 
     await fetchUser(data.id);
+
+    setLoading(false);
   };
 
   const logout = () => {
-    console.log("el pepe")
     localStorage.removeItem("auth");
     setAuth(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ auth, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ auth, user, loading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

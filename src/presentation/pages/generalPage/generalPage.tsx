@@ -1,9 +1,7 @@
-import Toolbar from "../../../app/toolbar/Toolbar";
-
 const LoginPage: React.FC = () => {
     return (
         <>
-            <Toolbar/>
+            Bienvenido al sistema de registro de tareo
         </>
     );
 }
