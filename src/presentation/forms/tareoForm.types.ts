@@ -3,6 +3,8 @@ export interface TareoResponse {
     tareoCode: string;
     workDate: string;
     description: string;
+    startTime: string;
+    endTime: string;
     totalHour: string;
     username: string;
     category: string;
