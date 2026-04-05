@@ -13,25 +13,45 @@ const formatHour = (h:number) => {
     return `${hour12}:00 ${period}`;
 };
 
-const getWeekDay = (date: string) => {
+const getWeekDays = (date: Date) => {
     const d = new Date(date);
+    const day = d.getDay();
 
+    const monday = new Date(d);
+    monday.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+
+    return Array.from({ length: 7 }, (_, i) => {
+        const newDay = new Date(monday);
+        newDay.setDate(monday.getDate() + i);
+        return newDay;
+    });
+};
+
+const getStartOfWeek = (date: Date) => {
+    const d = new Date(date);
     const day = d.getDay(); // 0 domingo
 
-    const map: Record<number, string> = {
-        1: "Lunes",
-        2: "Martes",
-        3: "Miércoles",
-        4: "Jueves",
-        5: "Viernes"
-    };
-
-    return map[day];
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
 };
+
+
+const formatDayLabel = (date: Date) =>
+    date.toLocaleDateString("es-PE", {
+        weekday: "long",
+        day: "numeric",
+        month: "short"
+});
+
+const isSameDay = (a: Date, b: Date) =>
+    a.toDateString() === b.toDateString();
 
 export {
     timeToHour,
     hoursToMinutes,
     formatHour,
-    getWeekDay
+    getWeekDays,
+    getStartOfWeek,
+    formatDayLabel,
+    isSameDay
 }
