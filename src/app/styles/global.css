@@ -22,3 +22,11 @@
 .navbar-text {
     color: white
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(40%);
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(40%);
+}

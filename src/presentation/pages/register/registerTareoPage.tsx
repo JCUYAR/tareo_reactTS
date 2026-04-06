@@ -4,9 +4,11 @@ import { listTareoByUser } from "../../../infraestructure/api/tareoService";
 import { formatDayLabel, formatHour, getWeekDays, hoursToMinutes, isSameDay, timeToHour } from "../../../app/helpers/timeHelpers";
 import "../../../app/styles/registerT.css";
 import RegisterModal from "./modals/registerModal";
+import { useAlertModal } from "../../../app/providers/AlertModalContext";
 
 const RegisterTareo: FC = () => {
     const { user } = useAuth();
+    const { alertModal } = useAlertModal();
 
     const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
     const [isLoad, setIsLoad] = useState<boolean>(false);
@@ -115,7 +117,10 @@ const RegisterTareo: FC = () => {
 
                             {tareos
                                 .filter(t =>
-                                    isSameDay(new Date(t.workDate), day)
+                                    isSameDay(
+                                        new Date(t.work_date),
+                                        new Date(day.setHours(0, 0, 0, 0))
+                                    )
                                 ).map(t => {
 
                                     const start = timeToHour(t.startTime);
@@ -141,12 +146,14 @@ const RegisterTareo: FC = () => {
                     </div>
                 ))}
             </div>
-            {openModal && 
+            {openModal &&
                 <RegisterModal
                     onOpen={openModal}
                     onCloseM={() => {
-                        console.log("El pepe")
                         setOpenModal(false);
+                        requestAnimationFrame(() => {
+                            getTareoByUser();
+                        });
                     }}
                     viewMode={viewMode}
                     updateMode={updateMode}

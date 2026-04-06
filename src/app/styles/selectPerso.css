@@ -1,0 +1,21 @@
+.react-select__control {
+  min-height: 38px;
+  border-color: #ced4da;
+}
+
+.react-select__control:hover {
+  border-color: #86b7fe;
+}
+
+.react-select__control--is-focused {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+}
+
+.react-select__single-value {
+  color: #212529;
+}
+
+.react-select__placeholder {
+  color: #6c757d;
+}

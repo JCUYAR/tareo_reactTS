@@ -8,11 +8,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { AuthProvider } from './app/providers/AuthContext.tsx'
+import { AlertModalProvider } from './app/providers/AlertModalContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <AlertModalProvider>
+        <App />
+      </AlertModalProvider>
     </AuthProvider>
     
   </StrictMode>,
