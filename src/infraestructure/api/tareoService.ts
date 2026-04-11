@@ -5,15 +5,23 @@ import { fetchData } from "./fetchData"
 
 
 const listTareoByUser = (userId: number) => {
-    const response = fetchData<TareoResponse>(
+    const response = fetchData<TareoResponse[]>(
         `tareo/ListTareoByUser/${userId}`,
         "GET"
     );
     return response;
 }
 
+const listOneById = (id: number, userId: number) => {
+    const response = fetchData<TareoResponse>(
+        `tareo/ListOneById/${id}&${userId}`,
+        "GET"
+    );
+    return response;
+}
+
 const listCategory = () => {
-    const response = fetchData<SelectDto>(
+    const response = fetchData<SelectDto[]>(
         `category/ListAllCategory`,
         "GET"
     );
@@ -21,7 +29,7 @@ const listCategory = () => {
 }
 
 const listArea = () => {
-    const response = fetchData<SelectDto>(
+    const response = fetchData<SelectDto[]>(
         `catalog/ListAllArea`,
         "GET"
     );
@@ -29,7 +37,7 @@ const listArea = () => {
 }
 
 const listStatus = () => {
-    const response = fetchData<SelectDto>(
+    const response = fetchData<SelectDto[]>(
         `catalog/ListAllStatus`,
         "GET"
     );
@@ -57,6 +65,7 @@ const addTareoService = (payload: AddTareo) => {
 
 export {
     listTareoByUser,
+    listOneById,
     listCategory,
     listArea,
     listStatus,

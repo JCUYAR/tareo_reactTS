@@ -31,6 +31,24 @@ axiosInstance.interceptors.response.use(
     }
 );
 
+// export async function fetchData<T>(
+//     url: string,
+//     method: Method,
+//     data?: any,
+//     config?: AxiosRequestConfig
+// ): Promise<BaseResult<T>> {
+
+//     const response = await axiosInstance.request<BaseResult<T>>({
+//         url,
+//         method,
+//         data: method !== "GET" ? data : undefined,
+//         params: method === "GET" ? data : undefined,
+//         ...config,
+//     });
+
+//     return response.data;
+// }
+
 export async function fetchData<T>(
     url: string,
     method: Method,
@@ -46,5 +64,15 @@ export async function fetchData<T>(
         ...config,
     });
 
-    return response.data;
+    const result = response.data;
+
+    if (!result.success) {
+        const message =
+            result.errors?.[0]?.message ||
+            "Unexpected server error";
+
+        throw new Error(message);
+    }
+
+    return result;
 }

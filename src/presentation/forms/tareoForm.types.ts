@@ -16,10 +16,10 @@ export interface UpdtAddTareo {
     id: number | null;
     tareoCode: string | null;
     description: string;
-    user_id: number | null;
-    category: number | null;
-    area: number | null;
-    status: number | null;
+    user_id: string | null;
+    category: string | null;
+    area: string | null;
+    status: string | null;
     work_date: string;
     start_time: string;
     end_time: string;

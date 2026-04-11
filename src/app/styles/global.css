@@ -30,3 +30,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(40%);
 }
+
+.backdrop-oscuro {
+  opacity: 0.5 !important;
+  background-color: black !important;
+  z-index: 1070 !important;
+}
+
+.custom-modal-confirmacion {
+  z-index: 1080 !important;
+}

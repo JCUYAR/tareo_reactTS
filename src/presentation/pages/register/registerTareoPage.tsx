@@ -1,7 +1,7 @@
 import { useEffect, useState, type FC } from "react";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { listTareoByUser } from "../../../infraestructure/api/tareoService";
-import { formatDayLabel, formatHour, getWeekDays, hoursToMinutes, isSameDay, timeToHour } from "../../../app/helpers/timeHelpers";
+import { formatDayLabel, formatDuration, formatHour, getWeekDays, hoursToMinutes, isSameDay, timeToHour } from "../../../app/helpers/timeHelpers";
 import "../../../app/styles/registerT.css";
 import RegisterModal from "./modals/registerModal";
 import { useAlertModal } from "../../../app/providers/AlertModalContext";
@@ -14,6 +14,9 @@ const RegisterTareo: FC = () => {
     const [isLoad, setIsLoad] = useState<boolean>(false);
     const [tareos, setTareos] = useState<any[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
+
+    const [idTareo, setIdTareo] = useState<number | null>(null);
+    const [idUserReg, setIdUserReg] = useState<number | null>(null);
 
     const [viewMode, setViewMode] = useState<boolean>(false);
     const [updateMode, setUpdateMode] = useState<boolean>(false);
@@ -87,7 +90,14 @@ const RegisterTareo: FC = () => {
                 >
                     Agregar
                 </button>
-
+                {/* Es una mouseske herramienta misteriosa que nos ayudara mas tarde */}
+                {/* <button
+                    onClick={() => {
+                        alertModal("success", "Tareo registrado correctamente")
+                    }}
+                >
+                    Test Modal
+                </button> */}
             </div>
 
             <div className="calendar">
@@ -122,21 +132,30 @@ const RegisterTareo: FC = () => {
                                         new Date(day.setHours(0, 0, 0, 0))
                                     )
                                 ).map(t => {
-
                                     const start = timeToHour(t.startTime);
                                     const end = timeToHour(t.endTime);
+                                    const TOTAL_HOURS = 24;
 
                                     return (
                                         <div
+                                            tabIndex={0}
                                             key={t.id}
                                             className="tareo-card"
                                             style={{
-                                                gridColumn: `${Math.floor(start) + 1} / ${Math.ceil(end) + 1}`
+                                                left: `${(start / TOTAL_HOURS) * 100}%`,
+                                                width: `${((end - start) / TOTAL_HOURS) * 100}%`,
+                                                cursor: "pointer"
+                                            }}
+                                            onClick={() => {
+                                                setViewMode(true);
+                                                setOpenModal(true);
+                                                setIdTareo(t.id)
+                                                setIdUserReg(t.user_id)
                                             }}
                                         >
                                             {t.description}
                                             <br />
-                                            {hoursToMinutes(t.totalHours)} min
+                                            {formatDuration(t.totalHours)}
                                         </div>
                                     );
                                 })}
@@ -157,6 +176,8 @@ const RegisterTareo: FC = () => {
                     }}
                     viewMode={viewMode}
                     updateMode={updateMode}
+                    idTareo={idTareo}
+                    idUserReg={idUserReg}
                 />
             }
         </>

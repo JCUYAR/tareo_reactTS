@@ -46,6 +46,24 @@ const formatDayLabel = (date: Date) =>
 const isSameDay = (a: Date, b: Date) =>
     a.toDateString() === b.toDateString();
 
+const formatDuration = (hours: string): string => {
+    const totalMinutes = Math.round(parseFloat(hours) * 60);
+    
+    if (totalMinutes < 60) {
+        return `${totalMinutes} min`;
+    }
+
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+
+    if (m === 0) {
+        return `${h} hora${h > 1 ? 's' : ''}`;
+    }
+
+    return `${h} hora${h > 1 ? 's' : ''} ${m} min`;
+};
+
+
 export {
     timeToHour,
     hoursToMinutes,
@@ -53,5 +71,6 @@ export {
     getWeekDays,
     getStartOfWeek,
     formatDayLabel,
-    isSameDay
+    isSameDay,
+    formatDuration
 }

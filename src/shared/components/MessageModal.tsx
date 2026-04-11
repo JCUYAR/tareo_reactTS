@@ -1,5 +1,6 @@
 import { Modal } from "react-bootstrap";
 import Icon from "../ui/Icon";
+import "../../app/styles/global.css"
 
 interface MessageModalProps {
     type: string;

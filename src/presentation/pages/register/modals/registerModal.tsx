@@ -2,14 +2,14 @@ import { Button, Modal } from "react-bootstrap";
 import "../../../../app/styles/registerModal.css"
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import type { AddTareo, UpdtAddTareo } from "../../../forms/tareoForm.types";
+import type { AddTareo, TareoResponse, UpdtAddTareo } from "../../../forms/tareoForm.types";
 import { useEffect, useRef, useState } from "react";
 import type { SelectDto } from "../../../general/SelectDto";
 import { listUsers } from "../../../../infraestructure/api/userService";
 import Select from "react-select/base";
 import type { ActionMeta, InputActionMeta, SelectInstance } from "react-select";
 import SelectPerso from "../../../../shared/components/SelectPerso";
-import { addTareoService, listArea, listCategory, listStatus } from "../../../../infraestructure/api/tareoService";
+import { addTareoService, listArea, listCategory, listOneById, listStatus } from "../../../../infraestructure/api/tareoService";
 import { useAuth } from "../../../../app/providers/AuthContext";
 import { useAlertModal } from "../../../../app/providers/AlertModalContext";
 
@@ -18,13 +18,17 @@ interface RegisterModalProps {
     onCloseM: () => void;
     viewMode: boolean;
     updateMode: boolean;
+    idTareo?: number | null;
+    idUserReg?: number | null;
 }
 
 const RegisterModal = ({
     onOpen = false,
     onCloseM,
     viewMode = false,
-    updateMode = false
+    updateMode = false,
+    idTareo = null,
+    idUserReg = null
 
 }: RegisterModalProps) => {
 
@@ -67,6 +71,20 @@ const RegisterModal = ({
         total_hours: ""
     }
 
+    const emptyTareo: UpdtAddTareo = {
+        description: "",
+        user_id: null,
+        category: null,
+        area: null,
+        status: null,
+        work_date: "",
+        start_time: "",
+        end_time: "",
+        id: null,
+        tareoCode: null,
+        total_hours: null
+    };
+
     const { user } = useAuth();
     const { alertModal } = useAlertModal();
 
@@ -101,6 +119,13 @@ const RegisterModal = ({
         setStatusList(response.data);
     }
 
+    const handleClose = () => {
+        setInitalState(emptyTareo)
+        onCloseM();
+    }
+
+
+
     return (
         <>
 
@@ -115,19 +140,23 @@ const RegisterModal = ({
                     errors,
                     setErrors,
                     touched,
-                    setFieldValue
+                    setFieldValue,
+                    resetForm
                 }) => {
 
                     const handleSubmit = async () => {
                         try {
                             if (!user) return;
-
+                            if (!values.category || !values.area || !values.status) {
+                                return;
+                            }
                             const addPayload: AddTareo = {
+
                                 description: values.description,
                                 user_id: user.id,
-                                category: values.category,
-                                area: values.area,
-                                status: values.status,
+                                category: parseInt(values.category, 10),
+                                area: parseInt(values.area, 10),
+                                status: parseInt(values.status, 10),
                                 work_date: values.work_date,
                                 start_time: values.start_time,
                                 end_time: values.end_time
@@ -135,7 +164,7 @@ const RegisterModal = ({
                             await addTareoService(addPayload);
 
                             alertModal("success", "Tareo registrado correctamente", () => {
-                                onCloseM();
+                                handleClose();
 
                             });
                         } catch (error) {
@@ -155,11 +184,44 @@ const RegisterModal = ({
                         }
                     }
 
+                    // Fuera del componente, junto a los tipos
+                    const mapTareoToState = (t: TareoResponse): UpdtAddTareo => ({
+                        id: t.id,
+                        user_id: t.user_id,
+                        description: t.description,
+                        category: t.category,
+                        area: t.area,
+                        status: t.status,
+                        work_date: t.work_date,
+                        start_time: t.startTime,
+                        end_time: t.endTime,
+                        tareoCode: t.tareoCode,
+                        total_hours: null
+                    });
+
+                    const getUserById = async () => {
+                        if (idTareo && idUserReg) {
+                            const { data } = await listOneById(idTareo, idUserReg);
+                            const mapped = mapTareoToState(data); // ✅ usa mapped directamente
+
+                            setInitalState(prev => ({ ...prev, ...mapped }));
+
+                            // ✅ Usa mapped, no initialState
+                            setFieldValue("userData", `${user?.name} ${user?.lName}`);
+                            setFieldValue("tareoCode", mapped.tareoCode);
+                            setFieldValue("description", mapped.description);
+                            setFieldValue("category", mapped.category?.toString());
+                            setFieldValue("area", mapped.area?.toString());
+                            setFieldValue("status", mapped.status?.toString());
+                            setFieldValue("work_date", mapped.work_date?.toString().split("T")[0]); // ✅ recorta el ISO
+                            setFieldValue("start_time", mapped.start_time);
+                            setFieldValue("end_time", mapped.end_time);
+                        }
+                    };
                     useEffect(() => {
                         setViewModeM(viewMode);
                         setUpdateModeM(updateMode);
-                        setFieldValue("", "")
-                    }, [viewMode, updateMode]);
+                    }, [viewMode, updateMode,]);
 
                     useEffect(() => {
                         getListAllUser();
@@ -177,12 +239,18 @@ const RegisterModal = ({
                         }
                     }, [])
 
+                    useEffect(() => {
+                        if (viewModeM || updateModeM) {
+                            getUserById();
+                        }
+                    }, [viewModeM, updateModeM])
+
                     return (
                         <>
                             <div>
                                 <Modal
                                     show={onOpen}
-                                    onHide={onCloseM}
+                                    onHide={handleClose}
                                     size="xl"
                                     centered
                                     backdrop="static"
@@ -199,30 +267,33 @@ const RegisterModal = ({
                                     </Modal.Header>
                                     <Modal.Body>
                                         <form>
-                                            {updateModeM && (
-                                                <div className="row">
-                                                    <label className="col-4">Código de tareo:</label>
-                                                    <Field
-                                                        name="tareoCode"
-                                                        ref={formRefs.tareoCode}
-                                                        className="myInput col-8"
-                                                        disabled={true}
-                                                    />
-                                                </div>
-                                            )}
-
                                             {(updateModeM || viewModeM) && (
-                                                <div className="row">
-                                                    <label className="col-4">Usuario</label>
-                                                    <Field
-                                                        name="userData"
-                                                        ref={formRefs.userData}
-                                                        className={`myInput col-8`}
-                                                        isDisabled={true}
+                                                <div className="row mb-3">
+                                                    <div className="col-5">
+                                                        <div className="form-group">
+                                                            <label className="small-label">Código de tareo</label>
+                                                            <Field
+                                                                name="tareoCode"
+                                                                ref={formRefs.tareoCode}
+                                                                className="form-control small-input"
+                                                                disabled={true}
+                                                            />
+                                                        </div>
+                                                    </div>
 
-                                                    />
+                                                    <div className="col-3">
+                                                        <div className="form-group">
+                                                            <label className="small-label">Usuario</label>
+                                                            <Field
+                                                                name="userData"
+                                                                ref={formRefs.userData}
+                                                                className={`form-control small-input`}
+                                                                disabled={true}
+
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
-
                                             )}
 
                                             <div className="row">

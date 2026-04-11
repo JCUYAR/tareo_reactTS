@@ -16,7 +16,7 @@ const authenticateService = (payload: LoginBody) => {
 }
 
 const getUserDataById = (id: number) => {
-    const response = fetchData<UserData> (
+    const response = fetchData<UserData[]> (
         `user/GetUserById/${id}`,
         "GET"
     );

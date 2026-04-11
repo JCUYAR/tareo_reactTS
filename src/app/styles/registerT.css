@@ -49,6 +49,7 @@
     z-index: 9;
 }
 
+
 /* .day-track {
     position: relative;
     background:
@@ -62,9 +63,16 @@
 } */
 
 .day-track {
-    display: grid;
-    grid-template-columns: repeat(24, 1fr);
     position: relative;
+    overflow: hidden;
+    background:
+        repeating-linear-gradient(
+            to right,
+            transparent,
+            transparent calc(100% / 24 - 1px),
+            #e3e3e3 calc(100% / 24 - 1px),
+            #e3e3e3 calc(100% / 24)
+        );
 }
 
 /* ===== CARDS ===== */

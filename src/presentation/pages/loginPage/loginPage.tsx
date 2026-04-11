@@ -52,9 +52,11 @@ const LoginPage: React.FC = () => {
                     const handleSubmit = async () => {
                         try {
                             const response = await authenticateService(values);
+                            const dataToken = response.data.access_token;
+                            const dataId = response.data.id;
                             login({
-                                token: response.data[0].access_token,
-                                id: response.data[0].id
+                                token: dataToken,
+                                id: dataId
                             });
                             navigate('/dashboard', { replace: true});
                         } catch (error) {
