@@ -1,4 +1,4 @@
-import type { AddTareo, TareoResponse } from "../../presentation/forms/tareoForm.types"
+import type { AddTareo, TareoResponse, UpdtTareo } from "../../presentation/forms/tareoForm.types"
 import type { BaseResult } from "../../presentation/general/BaseResult";
 import type { SelectDto } from "../../presentation/general/SelectDto";
 import { fetchData } from "./fetchData"
@@ -63,11 +63,32 @@ const addTareoService = (payload: AddTareo) => {
      return response;
 }
 
+const updtTareoService = (payload: UpdtTareo) => {
+    const body = {
+        id: payload.id,
+        description: payload.description,
+        category: payload.category,
+        area: payload.area,
+        status: payload.status,
+        start_time: payload.start_time,
+        end_time: payload.end_time
+    }
+    
+    const response = fetchData<void> (
+        "tareo/UpdateTareo",
+        "PUT",
+        body
+    );
+
+    return response;
+}
+
 export {
     listTareoByUser,
     listOneById,
     listCategory,
     listArea,
     listStatus,
-    addTareoService
+    addTareoService,
+    updtTareoService
 }

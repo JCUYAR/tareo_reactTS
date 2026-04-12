@@ -31,6 +31,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(40%);
 }
 
+input.form-control:disabled,
+textarea.form-control:disabled,
+.react-select--is-disabled .react-select__control {
+  background-color: #b3b3b3;
+  color: #3f3f3f;
+  border: 1px solid rgb(168, 168, 168);
+}
+
 .backdrop-oscuro {
   opacity: 0.5 !important;
   background-color: black !important;

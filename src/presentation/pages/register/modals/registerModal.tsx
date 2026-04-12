@@ -2,14 +2,14 @@ import { Button, Modal } from "react-bootstrap";
 import "../../../../app/styles/registerModal.css"
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import type { AddTareo, TareoResponse, UpdtAddTareo } from "../../../forms/tareoForm.types";
+import type { AddTareo, TareoResponse, UpdtAddTareo, UpdtTareo } from "../../../forms/tareoForm.types";
 import { useEffect, useRef, useState } from "react";
 import type { SelectDto } from "../../../general/SelectDto";
 import { listUsers } from "../../../../infraestructure/api/userService";
 import Select from "react-select/base";
 import type { ActionMeta, InputActionMeta, SelectInstance } from "react-select";
 import SelectPerso from "../../../../shared/components/SelectPerso";
-import { addTareoService, listArea, listCategory, listOneById, listStatus } from "../../../../infraestructure/api/tareoService";
+import { addTareoService, listArea, listCategory, listOneById, listStatus, updtTareoService } from "../../../../infraestructure/api/tareoService";
 import { useAuth } from "../../../../app/providers/AuthContext";
 import { useAlertModal } from "../../../../app/providers/AlertModalContext";
 
@@ -20,6 +20,7 @@ interface RegisterModalProps {
     updateMode: boolean;
     idTareo?: number | null;
     idUserReg?: number | null;
+    resetModes?: () => void;
 }
 
 const RegisterModal = ({
@@ -28,7 +29,8 @@ const RegisterModal = ({
     viewMode = false,
     updateMode = false,
     idTareo = null,
-    idUserReg = null
+    idUserReg = null,
+    resetModes
 
 }: RegisterModalProps) => {
 
@@ -122,6 +124,7 @@ const RegisterModal = ({
     const handleClose = () => {
         setInitalState(emptyTareo)
         onCloseM();
+        resetModes && resetModes();
     }
 
 
@@ -145,40 +148,64 @@ const RegisterModal = ({
                 }) => {
 
                     const handleSubmit = async () => {
-                        try {
-                            if (!user) return;
-                            if (!values.category || !values.area || !values.status) {
-                                return;
+                        if (updateModeM) {
+                            try {
+                                if (!user) return;
+                                if (!values.category || !values.area || !values.status) {
+                                    return;
+                                }
+                                const updtPayload: UpdtTareo = {
+                                    id: initialState.id,
+                                    description: values.description,
+                                    category: parseInt(values.category, 10),
+                                    area: parseInt(values.area, 10),
+                                    status: parseInt(values.status, 10),
+                                    start_time: values.start_time,
+                                    end_time: values.end_time
+                                };
+                                await updtTareoService(updtPayload);
+
+                                alertModal("success", "Tareo actualizado correctamente", () => {
+                                    handleClose();
+                                });
+                            } catch (error) {
+                                alertModal("error", "Ha ocurrido un error al actualizar el tareo");
                             }
-                            const addPayload: AddTareo = {
+                        } else {
+                            try {
+                                if (!user) return;
+                                if (!values.category || !values.area || !values.status) {
+                                    return;
+                                }
+                                const addPayload: AddTareo = {
 
-                                description: values.description,
-                                user_id: user.id,
-                                category: parseInt(values.category, 10),
-                                area: parseInt(values.area, 10),
-                                status: parseInt(values.status, 10),
-                                work_date: values.work_date,
-                                start_time: values.start_time,
-                                end_time: values.end_time
-                            };
-                            await addTareoService(addPayload);
+                                    description: values.description,
+                                    user_id: user.id,
+                                    category: parseInt(values.category, 10),
+                                    area: parseInt(values.area, 10),
+                                    status: parseInt(values.status, 10),
+                                    work_date: values.work_date,
+                                    start_time: values.start_time,
+                                    end_time: values.end_time
+                                };
+                                await addTareoService(addPayload);
 
-                            alertModal("success", "Tareo registrado correctamente", () => {
-                                handleClose();
+                                alertModal("success", "Tareo registrado correctamente", () => {
+                                    handleClose();
 
-                            });
-                        } catch (error) {
-                            alertModal("error", "Ha ocurrido un error al registrar el tareo");
+                                });
+                            } catch (error) {
+                                alertModal("error", "Ha ocurrido un error al registrar el tareo");
 
+                            }
                         }
+
                     };
 
                     const onSubmit = () => {
                         if (viewModeM) {
                             setViewModeM(false);
                             setUpdateModeM(true);
-                        } else if (updateModeM) {
-
                         } else {
                             handleSubmit();
                         }
@@ -202,7 +229,7 @@ const RegisterModal = ({
                     const getUserById = async () => {
                         if (idTareo && idUserReg) {
                             const { data } = await listOneById(idTareo, idUserReg);
-                            const mapped = mapTareoToState(data); // ✅ usa mapped directamente
+                            const mapped = mapTareoToState(data);
 
                             setInitalState(prev => ({ ...prev, ...mapped }));
 
@@ -262,14 +289,14 @@ const RegisterModal = ({
                                         closeButton
                                     >
                                         {(!viewModeM && !updateModeM ? "Registro de nuevo tareo" :
-                                            (viewModeM && !updateModeM) ? "Visualización de registro " :
-                                                (!viewModeM && updateModeM) ? "Actualización de registro " : "")}
+                                            (viewModeM && !updateModeM) ? `Visualización de registro - Usuario: ${`${user?.name} ${user?.lName}`}` :
+                                                (!viewModeM && updateModeM) ? `Actualización de registro - Usuario: ${`${user?.name} ${user?.lName}`}` : "")}
                                     </Modal.Header>
                                     <Modal.Body>
                                         <form>
                                             {(updateModeM || viewModeM) && (
                                                 <div className="row mb-3">
-                                                    <div className="col-5">
+                                                    <div className="col-2">
                                                         <div className="form-group">
                                                             <label className="small-label">Código de tareo</label>
                                                             <Field
@@ -281,7 +308,7 @@ const RegisterModal = ({
                                                         </div>
                                                     </div>
 
-                                                    <div className="col-3">
+                                                    {/* <div className="col-3">
                                                         <div className="form-group">
                                                             <label className="small-label">Usuario</label>
                                                             <Field
@@ -292,7 +319,7 @@ const RegisterModal = ({
 
                                                             />
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             )}
 
@@ -372,7 +399,7 @@ const RegisterModal = ({
                                                             type="date"
                                                             className={`form-control small-input  ${errors.work_date ? "is-invalid" : ""}`}
                                                             ref={formRefs.work_date}
-                                                            disabled={viewModeM}
+                                                            disabled={viewModeM || updateModeM}
                                                         />
                                                     </div>
                                                 </div>
@@ -404,47 +431,29 @@ const RegisterModal = ({
                                                 </div>
                                             </div>
 
-                                            <div className="row mt-3">
-                                                <div className="col-1">
-                                                    {!viewModeM && (
-                                                        <Button
-                                                            name="submit"
-                                                            ref={formRefs.submit}
-                                                            className="btn btn-secondary"
-                                                            onClick={() => {
-
-                                                            }}
-                                                        >
-                                                            {updateModeM ? "Reestablecer" : "Limpiar"}
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                                <div className="col-1 mx-2">
+                                            <div className="mt-3 d-flex gap-1">
+                                                {!viewModeM && (
                                                     <Button
-                                                        name="submit"
-                                                        ref={formRefs.submit}
-                                                        className="btn btn-success"
-                                                        onClick={() => {
-                                                            onSubmit();
-                                                        }}
+                                                        className="btn btn-secondary"
                                                     >
-                                                        {viewModeM ? "Editar" :
-                                                            updateModeM ? "Actualizar" : "Guardar"}
+                                                        {updateModeM ? "Reestablecer" : "Limpiar"}
                                                     </Button>
-                                                </div>
-                                                <div className="col-1">
-                                                    <Button
-                                                        name="submit"
-                                                        ref={formRefs.submit}
-                                                        className="btn btn-danger"
-                                                        onClick={() => {
-                                                            onCloseM();
-                                                        }}
-                                                    >
-                                                        Salir
-                                                    </Button>
-                                                </div>
+                                                )}
 
+                                                <Button
+                                                    className="btn btn-success"
+                                                    onClick={onSubmit}
+                                                >
+                                                    {viewModeM ? "Editar" :
+                                                        updateModeM ? "Actualizar" : "Guardar"}
+                                                </Button>
+
+                                                <Button
+                                                    className="btn btn-danger"
+                                                    onClick={handleClose}
+                                                >
+                                                    Salir
+                                                </Button>
                                             </div>
 
                                         </form>

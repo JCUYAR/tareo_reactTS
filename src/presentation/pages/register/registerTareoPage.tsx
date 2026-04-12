@@ -57,6 +57,11 @@ const RegisterTareo: FC = () => {
         }
     }
 
+    const resetModes = () => {
+        setViewMode(false);
+        setUpdateMode(false);
+    }
+
     useEffect(() => {
         if (user != null && !isLoad) {
             getTareoByUser();
@@ -178,6 +183,7 @@ const RegisterTareo: FC = () => {
                     updateMode={updateMode}
                     idTareo={idTareo}
                     idUserReg={idUserReg}
+                    resetModes={resetModes}
                 />
             }
         </>

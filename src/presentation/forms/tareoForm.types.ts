@@ -36,3 +36,13 @@ export interface AddTareo {
     start_time: string;
     end_time: string;
 }
+
+export interface UpdtTareo {
+    id: number | null;
+    description: string;
+    category: number | null;
+    area: number | null;
+    status: number | null;
+    start_time: string;
+    end_time: string;
+}
