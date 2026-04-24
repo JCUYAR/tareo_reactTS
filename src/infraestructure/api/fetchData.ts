@@ -64,15 +64,16 @@ export async function fetchData<T>(
         ...config,
     });
 
-    const result = response.data;
+    return response.data;
+    // const result = response.data;
 
-    if (!result.success) {
-        const message =
-            result.errors?.[0]?.message ||
-            "Unexpected server error";
+    // if (!result.success) {
+    //     const message =
+    //         result.errors?.[0]?.message ||
+    //         "Unexpected server error";
 
-        throw new Error(message);
-    }
+    //     throw new Error(message);
+    // }
 
-    return result;
+    // return result;
 }

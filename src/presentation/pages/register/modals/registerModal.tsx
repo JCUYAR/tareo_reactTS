@@ -127,8 +127,6 @@ const RegisterModal = ({
         resetModes && resetModes();
     }
 
-
-
     return (
         <>
 
@@ -188,15 +186,18 @@ const RegisterModal = ({
                                     start_time: values.start_time,
                                     end_time: values.end_time
                                 };
-                                await addTareoService(addPayload);
+                                const submit = await addTareoService(addPayload);
 
-                                alertModal("success", "Tareo registrado correctamente", () => {
-                                    handleClose();
-
-                                });
+                                if (submit.success) {
+                                    alertModal("success", "Tareo registrado correctamente", () => {
+                                        handleClose();
+                                    });
+                                } else {
+                                    alertModal("error", submit.errors[0].description);
+                                }
+                                
                             } catch (error) {
-                                alertModal("error", "Ha ocurrido un error al registrar el tareo");
-
+                                alertModal("error", "Ha ocurrido un error general no controlado, comunicarse con soporte");
                             }
                         }
 
