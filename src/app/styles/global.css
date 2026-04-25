@@ -48,3 +48,7 @@ textarea.form-control:disabled,
 .custom-modal-confirmacion {
   z-index: 1080 !important;
 }
+
+.modal-backdrop-top {
+    z-index: 1059 !important;
+}

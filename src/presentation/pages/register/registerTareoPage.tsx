@@ -96,13 +96,13 @@ const RegisterTareo: FC = () => {
                     Agregar
                 </button>
                 {/* Es una mouseske herramienta misteriosa que nos ayudara mas tarde */}
-                {/* <button
+                <button
                     onClick={() => {
                         alertModal("success", "Tareo registrado correctamente")
                     }}
                 >
                     Test Modal
-                </button> */}
+                </button>
             </div>
 
             <div className="calendar">

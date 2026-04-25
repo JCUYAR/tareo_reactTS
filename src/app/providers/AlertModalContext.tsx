@@ -29,7 +29,6 @@ export const AlertModalProvider = ({ children }: { children: ReactNode }) => {
         onCloseCallbackRef.current = onCloseCallback;
         setShow(true);
 
-        // ⏱ autocerrar en 5 segundos
         setTimeout(() => {
             setShow(false);
             onCloseCallbackRef.current?.();

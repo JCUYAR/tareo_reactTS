@@ -158,14 +158,20 @@ const RegisterModal = ({
                                     category: parseInt(values.category, 10),
                                     area: parseInt(values.area, 10),
                                     status: parseInt(values.status, 10),
+                                    user_id: parseInt(initialState.user_id ?? ""),
+                                    work_date: initialState.work_date,
                                     start_time: values.start_time,
                                     end_time: values.end_time
                                 };
-                                await updtTareoService(updtPayload);
+                                const submit = await updtTareoService(updtPayload);
 
-                                alertModal("success", "Tareo actualizado correctamente", () => {
-                                    handleClose();
-                                });
+                                if (submit.success) {
+                                    alertModal("success", "Tareo actualizado correctamente", () => {
+                                        handleClose();
+                                    });
+                                } else {
+                                    alertModal("error", submit.errors[0].description);
+                                }
                             } catch (error) {
                                 alertModal("error", "Ha ocurrido un error al actualizar el tareo");
                             }

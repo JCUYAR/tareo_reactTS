@@ -43,6 +43,8 @@ export interface UpdtTareo {
     category: number | null;
     area: number | null;
     status: number | null;
+    user_id: number | null;
+    work_date: string| null;
     start_time: string;
     end_time: string;
 }

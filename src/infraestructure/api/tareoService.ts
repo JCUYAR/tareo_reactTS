@@ -70,6 +70,8 @@ const updtTareoService = (payload: UpdtTareo) => {
         category: payload.category,
         area: payload.area,
         status: payload.status,
+        user_id: payload.user_id,
+        work_date: payload.work_date,
         start_time: payload.start_time,
         end_time: payload.end_time
     }
