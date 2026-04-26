@@ -52,3 +52,14 @@ textarea.form-control:disabled,
 .modal-backdrop-top {
     z-index: 1059 !important;
 }
+
+.drag-selection {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: rgba(123, 63, 242, 0.25);
+    border: 2px solid rgba(123, 63, 242, 0.6);
+    border-radius: 4px;
+    pointer-events: none; /* ✅ no interfiere con otros clicks */
+    z-index: 1;
+}

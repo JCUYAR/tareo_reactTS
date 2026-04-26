@@ -35,13 +35,16 @@ const getStartOfWeek = (date: Date) => {
     return new Date(d.setDate(diff));
 };
 
-
-const formatDayLabel = (date: Date) =>
-    date.toLocaleDateString("es-PE", {
+const formatDayLabel = (date: Date) => {
+    const formatted = date.toLocaleDateString("es-PE", {
         weekday: "long",
         day: "numeric",
         month: "short"
-});
+    });
+
+    // Capitaliza solo la primera letra de toda la cadena
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
 
 const isSameDay = (a: Date, b: Date) =>
     a.toDateString() === b.toDateString();

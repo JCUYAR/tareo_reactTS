@@ -22,15 +22,28 @@ export default function Sidebar({
     };
 
     const navItems = [
-        { id: "dashboard", icon: "bi-house", label: "Dashboard", path: "/dashboard" },
-        { id: "registro", icon: "bi-calendar-check", label: "Registrar", path: "/registerT" },
-        // { id: "registro", icon: "bi-pencil-square", label: "Registro" },
-        // { id: "usuarios", icon: "bi-people", label: "Usuarios" },
-        // { id: "reportes", icon: "bi-bar-chart-line", label: "Reportes" },
-        // { id: "config", icon: "bi-gear", label: "Configuración" },
+        {
+            id: "dashboard",
+            icon: "bi-house",
+            label: "Dashboard",
+            path: "/dashboard",
+            roles: ["admin", "user", "supervisor"]
+        },
+        {
+            id: "registro",
+            icon: "bi-calendar-check",
+            label: "Registrar",
+            path: "/registerT",
+            roles: ["admin", "user", "supervisor"]
+        },
+        {
+            id: "usuarios",
+            icon: "bi-people",
+            label: "Usuarios",
+            path: "/usuarios",
+            roles: ["admin"]
+        },
     ];
-
-
 
     return (
         <>
@@ -103,32 +116,34 @@ export default function Sidebar({
                 {/* Navigation */}
                 <nav className="sidebar-nav">
                     <ul>
-                        {navItems.map((item) => {
-                            const isActive = location.pathname === item.path;
+                        {navItems
+                            .filter(item => item.roles.includes(user?.role ?? ""))
+                            .map((item) => {
+                                const isActive = location.pathname === item.path;
 
-                            return (
-                                <li key={item.id}>
-                                    <button
-                                        className={`sidebar-nav__item ${isActive ? "sidebar-nav__item--active" : ""
-                                            }`}
-                                        onClick={() => navigate(item.path)}
-                                        title={!isOpen ? item.label : undefined}
-                                    >
-                                        <i className={`bi ${item.icon} sidebar-nav__icon`} />
+                                return (
+                                    <li key={item.id}>
+                                        <button
+                                            className={`sidebar-nav__item ${isActive ? "sidebar-nav__item--active" : ""
+                                                }`}
+                                            onClick={() => navigate(item.path)}
+                                            title={!isOpen ? item.label : undefined}
+                                        >
+                                            <i className={`bi ${item.icon} sidebar-nav__icon`} />
 
-                                        {isOpen && (
-                                            <span className="sidebar-nav__label">
-                                                {item.label}
-                                            </span>
-                                        )}
+                                            {isOpen && (
+                                                <span className="sidebar-nav__label">
+                                                    {item.label}
+                                                </span>
+                                            )}
 
-                                        {isActive && isOpen && (
-                                            <span className="sidebar-nav__indicator" />
-                                        )}
-                                    </button>
-                                </li>
-                            );
-                        })}
+                                            {isActive && isOpen && (
+                                                <span className="sidebar-nav__indicator" />
+                                            )}
+                                        </button>
+                                    </li>
+                                );
+                            })}
                     </ul>
                 </nav>
 

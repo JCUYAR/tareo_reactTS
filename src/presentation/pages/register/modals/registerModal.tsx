@@ -12,6 +12,7 @@ import SelectPerso from "../../../../shared/components/SelectPerso";
 import { addTareoService, listArea, listCategory, listOneById, listStatus, updtTareoService } from "../../../../infraestructure/api/tareoService";
 import { useAuth } from "../../../../app/providers/AuthContext";
 import { useAlertModal } from "../../../../app/providers/AlertModalContext";
+import { isDiferent } from "../../../../app/helpers/generalFunctions";
 
 interface RegisterModalProps {
     onOpen: boolean;
@@ -21,6 +22,9 @@ interface RegisterModalProps {
     idTareo?: number | null;
     idUserReg?: number | null;
     resetModes?: () => void;
+    prefilledDate?: Date | null;
+    prefilledTime?: string;
+    prefilledEndTime?: string;
 }
 
 const RegisterModal = ({
@@ -30,8 +34,10 @@ const RegisterModal = ({
     updateMode = false,
     idTareo = null,
     idUserReg = null,
-    resetModes
-
+    resetModes,
+    prefilledDate = null,
+    prefilledTime = "",
+    prefilledEndTime = ""
 }: RegisterModalProps) => {
 
     const formRefs = {
@@ -201,7 +207,7 @@ const RegisterModal = ({
                                 } else {
                                     alertModal("error", submit.errors[0].description);
                                 }
-                                
+
                             } catch (error) {
                                 alertModal("error", "Ha ocurrido un error general no controlado, comunicarse con soporte");
                             }
@@ -220,7 +226,7 @@ const RegisterModal = ({
 
                     // Fuera del componente, junto a los tipos
                     const mapTareoToState = (t: TareoResponse): UpdtAddTareo => ({
-                        id: t.id,
+                        id: parseInt(t.id),
                         user_id: t.user_id,
                         description: t.description,
                         category: t.category,
@@ -252,6 +258,30 @@ const RegisterModal = ({
                             setFieldValue("end_time", mapped.end_time);
                         }
                     };
+
+                    const {
+                        id: _id,
+                        user_id: _user_id,
+                        total_hours: _total_hours,
+                        ...cleanInitial
+                    } = initialState;
+
+                    const {
+                        id: _ide,
+                        user_id: _user_ide,
+                        total_hours: _total_hourse,
+                        userData: _user_data,
+                        ...cleanDataTemp
+                    } = values;
+
+                    const isDirty = isDiferent(cleanInitial, cleanDataTemp);
+
+                    useEffect(() => {
+                        console.log("initialState: ", cleanInitial);
+                        console.log("values: ", cleanDataTemp);
+                        console.log("isDirty: ", isDirty);
+                    }, [isDirty]);
+
                     useEffect(() => {
                         setViewModeM(viewMode);
                         setUpdateModeM(updateMode);
@@ -262,16 +292,19 @@ const RegisterModal = ({
                         getListAllCate();
                         getListAllArea();
                         getListAllStatus();
-                        if (viewModeM || updateModeM) {
-                            const user = userList.find(
-                                u => u.value === values.user_id?.toString()
-                            );
 
-                            if (user) {
-                                setFieldValue("user", user.descript);
-                            }
+                        // ✅ Inyecta fecha y hora si vienen del click en el track
+                        if (prefilledDate) {
+                            const dateStr = prefilledDate.toISOString().split("T")[0];
+                            setFieldValue("work_date", dateStr);
                         }
-                    }, [])
+                        if (prefilledTime) {
+                            setFieldValue("start_time", prefilledTime);
+                        }
+                        if (prefilledEndTime) {
+                            setFieldValue("end_time", prefilledEndTime);
+                        }
+                    }, []);
 
                     useEffect(() => {
                         if (viewModeM || updateModeM) {
@@ -442,6 +475,7 @@ const RegisterModal = ({
                                                 {!viewModeM && (
                                                     <Button
                                                         className="btn btn-secondary"
+                                                        disabled={!isDirty}
                                                     >
                                                         {updateModeM ? "Reestablecer" : "Limpiar"}
                                                     </Button>
@@ -450,6 +484,7 @@ const RegisterModal = ({
                                                 <Button
                                                     className="btn btn-success"
                                                     onClick={onSubmit}
+                                                    disabled={!isDirty}
                                                 >
                                                     {viewModeM ? "Editar" :
                                                         updateModeM ? "Actualizar" : "Guardar"}

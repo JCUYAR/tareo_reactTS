@@ -1,5 +1,5 @@
 export interface TareoResponse {
-    id: number;
+    id: string;
     tareoCode: string;
     work_date: string;
     description: string;

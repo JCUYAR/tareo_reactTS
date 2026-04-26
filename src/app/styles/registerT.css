@@ -90,3 +90,11 @@
     white-space: nowrap;
     box-shadow: 0 2px 6px rgba(0,0,0,.2);
 }
+
+.buttonWeekBar {
+    background-color: #7b3ff2;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 5px 7px;
+}
