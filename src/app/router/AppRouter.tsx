@@ -6,6 +6,7 @@ import GeneralPage from "../../presentation/pages/generalPage/generalPage";
 import PrivateRoute from "./PrivateRouter";
 import AppLayout from "../toolbar/Applayout";
 import RegisterTareo from "../../presentation/pages/register/registerTareoPage";
+import UtilsModulePage from "../../presentation/pages/utilsPage/UtilsModulePage";
 
 export default function AppRouter() {
   return (
@@ -28,6 +29,7 @@ export default function AppRouter() {
         >
           <Route path="/dashboard" element={<GeneralPage />} />
           <Route path="/registerT" element={<RegisterTareo/>} />
+          <Route path="/utils" element={<UtilsModulePage/>} />
         </Route>
 
       </Routes>

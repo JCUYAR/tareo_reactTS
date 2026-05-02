@@ -23,6 +23,8 @@ const FormikSelect = forwardRef<any, Props & FieldProps>(
         const selected =
             selectOptions.find(o => o.value === field.value) ?? null;
 
+        const isInvalid = className?.includes("is-invalid");
+
         const customStyles = {
             option: (base: any, state: any) => ({
                 ...base,
@@ -41,10 +43,17 @@ const FormikSelect = forwardRef<any, Props & FieldProps>(
 
             control: (base: any, state: any) => ({
                 ...base,
-                borderColor: state.isFocused ? "#86b7fe" : "#ced4da",
-                boxShadow: state.isFocused
-                    ? "0 0 0 .25rem rgba(13,110,253,.25)"
-                    : "none",
+                borderColor: isInvalid
+                    ? "#dc3545"
+                    : state.isFocused
+                        ? "#86b7fe"
+                        : "#ced4da",
+
+                boxShadow: isInvalid
+                    ? "0 0 0 .25rem rgba(220,53,69,.25)"
+                    : state.isFocused
+                        ? "0 0 0 .25rem rgba(13,110,253,.25)"
+                        : "none",
             }),
         };
 
@@ -56,7 +65,7 @@ const FormikSelect = forwardRef<any, Props & FieldProps>(
                 value={selected}
                 isDisabled={disabled}
                 classNamePrefix="react-select"
-                className={className}
+                className={""}
                 styles={customStyles}
                 placeholder={placeholder}
                 onChange={(option) => {

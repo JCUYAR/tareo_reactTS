@@ -58,11 +58,26 @@ const RegisterModal = ({
     }
 
     const formSchema = Yup.object({
-        userName: Yup.string()
-            .required("El usuario es obligatorio"),
+        description: Yup.string()
+            .required("*La descripción es obligatoria"),
 
-        password: Yup.string()
-            .required("La contraseña es obligatoria")
+        category: Yup.string()
+            .required("*La categoría es obligatoria"),
+
+        area: Yup.string()
+            .required("*El área es obligatoria"),
+
+        status: Yup.string()
+            .required("*El estado es obligatorio"),
+
+        work_date: Yup.string()
+            .required("*La fecha de registro es obligatoria"),
+
+        start_time: Yup.string()
+            .required("*La hora de inicio es obligatoria"),
+
+        end_time: Yup.string()
+            .required("*La hora de finalización es obligatoria"),
     })
 
     const tareoFormType: UpdtAddTareo = {
@@ -133,12 +148,17 @@ const RegisterModal = ({
         resetModes && resetModes();
     }
 
+
+
     return (
         <>
 
             <Formik
                 initialValues={initialState}
-                validationSchema={formSchema}
+                validationSchema={!viewModeM ? formSchema : ""}
+                validateOnMount={!viewModeM && !updateModeM}
+                validateOnBlur={!viewModeM}
+                validateOnChange={true}
                 onSubmit={(values) => {
                 }}
             >
@@ -148,8 +168,11 @@ const RegisterModal = ({
                     setErrors,
                     touched,
                     setFieldValue,
-                    resetForm
+                    resetForm,
+                    validateForm,
+                    validateField
                 }) => {
+                    
 
                     const handleSubmit = async () => {
                         if (updateModeM) {
@@ -224,6 +247,28 @@ const RegisterModal = ({
                         }
                     }
 
+                    const handleClean = () => {
+                        // debugger
+                        if (updateModeM) {
+                            setFieldValue("tareoCode", initialState.tareoCode);
+                            setFieldValue("description", initialState.description);
+                            setFieldValue("category", initialState.category?.toString());
+                            setFieldValue("area", initialState.area?.toString());
+                            setFieldValue("status", initialState.status?.toString());
+                            setFieldValue("work_date", initialState.work_date?.toString().split("T")[0]); // ✅ recorta el ISO
+                            setFieldValue("start_time", initialState.start_time);
+                            setFieldValue("end_time", initialState.end_time);
+                        } else if (!updateModeM && !viewModeM) {
+                            console.log("EL peep")
+                            setInitalState(emptyTareo)
+                            resetForm();
+                            setFieldValue("tareoCode", null)
+                            requestAnimationFrame(() => {
+                                validateForm();
+                            })
+                        }
+                    }
+
                     // Fuera del componente, junto a los tipos
                     const mapTareoToState = (t: TareoResponse): UpdtAddTareo => ({
                         id: parseInt(t.id),
@@ -276,11 +321,13 @@ const RegisterModal = ({
 
                     const isDirty = isDiferent(cleanInitial, cleanDataTemp);
 
-                    useEffect(() => {
+                                         useEffect(() => {
                         console.log("initialState: ", cleanInitial);
                         console.log("values: ", cleanDataTemp);
                         console.log("isDirty: ", isDirty);
-                    }, [isDirty]);
+                     }, [isDirty]);
+
+
 
                     useEffect(() => {
                         setViewModeM(viewMode);
@@ -297,13 +344,18 @@ const RegisterModal = ({
                         if (prefilledDate) {
                             const dateStr = prefilledDate.toISOString().split("T")[0];
                             setFieldValue("work_date", dateStr);
+                            
                         }
                         if (prefilledTime) {
                             setFieldValue("start_time", prefilledTime);
+                            
                         }
                         if (prefilledEndTime) {
                             setFieldValue("end_time", prefilledEndTime);
                         }
+                        requestAnimationFrame(() => {
+                            validateForm()
+                        })
                     }, []);
 
                     useEffect(() => {
@@ -379,6 +431,9 @@ const RegisterModal = ({
                                                             placeholder="Ingrese descripción de tareo"
                                                             autoFocus
                                                         />
+                                                        {errors.description && (
+                                                            <div style={{color: "red"}}>{errors.description}</div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -393,9 +448,13 @@ const RegisterModal = ({
                                                             className={errors.category ? "is-invalid" : ""}
                                                             options={categoryList}
                                                             ref={formRefs.category}
+                                                            isValid={errors.category}
                                                             placeholder="Seleccione categoría"
                                                             disabled={viewModeM}
                                                         />
+                                                        {errors.category && (
+                                                            <div style={{color: "red"}}>{errors.category}</div>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -408,9 +467,13 @@ const RegisterModal = ({
                                                             className={errors.area ? "is-invalid" : ""}
                                                             options={areaList}
                                                             ref={formRefs.area}
+                                                            isInvalid={errors.area}
                                                             placeholder="Seleccione area"
                                                             disabled={viewModeM}
                                                         />
+                                                        {errors.area && (
+                                                            <div style={{color: "red"}}>{errors.area}</div>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -426,6 +489,9 @@ const RegisterModal = ({
                                                             placeholder="Seleccione estado de tareo"
                                                             disabled={viewModeM}
                                                         />
+                                                        {errors.status && (
+                                                            <div style={{color: "red"}}>{errors.status}</div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -441,6 +507,9 @@ const RegisterModal = ({
                                                             ref={formRefs.work_date}
                                                             disabled={viewModeM || updateModeM}
                                                         />
+                                                        {errors.work_date && (
+                                                            <div style={{color: "red"}}>{errors.work_date}</div>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -454,6 +523,9 @@ const RegisterModal = ({
                                                             ref={formRefs.start_time}
                                                             disabled={viewModeM}
                                                         />
+                                                        {errors.start_time && (
+                                                            <div style={{color: "red"}}>{errors.start_time}</div>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -467,6 +539,9 @@ const RegisterModal = ({
                                                             ref={formRefs.end_time}
                                                             disabled={viewModeM}
                                                         />
+                                                        {errors.end_time && (
+                                                            <div style={{color: "red"}}>{errors.end_time}</div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -476,6 +551,9 @@ const RegisterModal = ({
                                                     <Button
                                                         className="btn btn-secondary"
                                                         disabled={!isDirty}
+                                                        onClick = {(event: any) => {
+                                                            handleClean();
+                                                        }}
                                                     >
                                                         {updateModeM ? "Reestablecer" : "Limpiar"}
                                                     </Button>
@@ -484,7 +562,7 @@ const RegisterModal = ({
                                                 <Button
                                                     className="btn btn-success"
                                                     onClick={onSubmit}
-                                                    disabled={!isDirty}
+                                                    disabled={(!viewModeM) && !isDirty}
                                                 >
                                                     {viewModeM ? "Editar" :
                                                         updateModeM ? "Actualizar" : "Guardar"}

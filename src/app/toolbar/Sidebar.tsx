@@ -37,10 +37,10 @@ export default function Sidebar({
             roles: ["admin", "user", "supervisor"]
         },
         {
-            id: "usuarios",
+            id: "utils",
             icon: "bi-people",
-            label: "Usuarios",
-            path: "/usuarios",
+            label: "Utilitarios",
+            path: "/utils",
             roles: ["admin"]
         },
     ];
