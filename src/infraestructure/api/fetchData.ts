@@ -54,9 +54,9 @@ export async function fetchData<T>(
     method: Method,
     data?: any,
     config?: AxiosRequestConfig
-): Promise<BaseResult<T>> {
+): Promise<T> {
 
-    const response = await axiosInstance.request<BaseResult<T>>({
+    const response = await axiosInstance.request<T>({
         url,
         method,
         data: method !== "GET" ? data : undefined,
@@ -65,15 +65,4 @@ export async function fetchData<T>(
     });
 
     return response.data;
-    // const result = response.data;
-
-    // if (!result.success) {
-    //     const message =
-    //         result.errors?.[0]?.message ||
-    //         "Unexpected server error";
-
-    //     throw new Error(message);
-    // }
-
-    // return result;
 }

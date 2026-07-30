@@ -399,19 +399,6 @@ const RegisterModal = ({
                                                             />
                                                         </div>
                                                     </div>
-
-                                                    {/* <div className="col-3">
-                                                        <div className="form-group">
-                                                            <label className="small-label">Usuario</label>
-                                                            <Field
-                                                                name="userData"
-                                                                ref={formRefs.userData}
-                                                                className={`form-control small-input`}
-                                                                disabled={true}
-
-                                                            />
-                                                        </div>
-                                                    </div> */}
                                                 </div>
                                             )}
 
