@@ -259,7 +259,6 @@ const RegisterModal = ({
                             setFieldValue("start_time", initialState.start_time);
                             setFieldValue("end_time", initialState.end_time);
                         } else if (!updateModeM && !viewModeM) {
-                            console.log("EL peep")
                             setInitalState(emptyTareo)
                             resetForm();
                             setFieldValue("tareoCode", null)

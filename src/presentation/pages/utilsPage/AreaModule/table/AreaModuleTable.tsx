@@ -7,7 +7,16 @@ import type { PagedResponse } from "../../../../general/PagedResponse";
 import type { CatalogParams, ListCatalog } from "../../../../Lists/catalog.types";
 import { getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
 
-const AreaModuleTable: FC = () => {
+
+interface AreaModuleTableProps {
+    search: string;
+    searchTrigger: number;
+}
+
+const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
+    search,
+    searchTrigger
+}) => {
 
     const [getId, setGetID] = useState<string>("");
 
@@ -116,20 +125,20 @@ const AreaModuleTable: FC = () => {
         // },
     ];
 
-    const actionEdit = async (code: string) => { 
+    const actionEdit = async (code: string) => {
         // navigate(/archivos/ctcheq07/form?codeCta=${encodeURIComponent(code)}&edit=true); 
-    }; 
-    
-    const actionPreview = async (code: string) => { 
+    };
+
+    const actionPreview = async (code: string) => {
         // navigate(/archivos/ctcheq07/form?codeCta=${encodeURIComponent(code)}&edit=false); 
-    }; 
-    
-    const getList = (request: CatalogParams) => { 
-        getPagedListCategory(request).then((response) => { 
-             if (response.success) { 
-                 setResponseInfo(response as PagedResponse<ListCatalog[]>); 
-             } 
-        }); 
+    };
+
+    const getList = (request: CatalogParams) => {
+        getPagedListCategory(request).then((response) => {
+            if (response.success) {
+                setResponseInfo(response as PagedResponse<ListCatalog[]>);
+            }
+        });
     };
 
     const table = useReactTable({
@@ -160,13 +169,13 @@ const AreaModuleTable: FC = () => {
 
     useEffect(() => {
         getList({
-          pageNumber: pagination.pageIndex + 1,
-          pageSize: pagination.pageSize,
-          type: "1",
-          description: ""
-       });
-      }, [pagination]);
-    
+            pageNumber: pagination.pageIndex + 1,
+            pageSize: pagination.pageSize,
+            type: "1",
+            description: search
+        });
+    }, [searchTrigger, pagination]);
+
 
 
     return (
@@ -175,11 +184,11 @@ const AreaModuleTable: FC = () => {
                 <TableComponent
                     table={table}
                     totalItems={totalItems}
-                    // stickyColumns={[0]}
-                    // onClickHandler={handleClickTable}
-                    // stickyColumnsRight={[9]}
-                    // disabledCellsEvent={[0, 10]}
-                    // actionLastTab={actionLastTab}
+                // stickyColumns={[0]}
+                // onClickHandler={handleClickTable}
+                // stickyColumnsRight={[9]}
+                // disabledCellsEvent={[0, 10]}
+                // actionLastTab={actionLastTab}
                 />
             </div>
         </>
