@@ -6,6 +6,7 @@ import { Button } from "react-bootstrap";
 interface AreaModuleFilterProps {
     sendSearchFilter: (param: string) => void;
     onSearch: () => void;
+    onNew: () => void;
 }
 
 interface initValues {
@@ -14,7 +15,8 @@ interface initValues {
 
 const AreaModuleFilter: React.FC<AreaModuleFilterProps> = ({
     sendSearchFilter,
-    onSearch
+    onSearch,
+    onNew
 }) => {
     const formRefs = {
         search: useRef<HTMLInputElement>(null)
@@ -81,6 +83,7 @@ const AreaModuleFilter: React.FC<AreaModuleFilterProps> = ({
                                     <div className="col-auto">
                                         <Button
                                             className="btn btn-success"
+                                            onClick={onNew}
                                         >
                                             Nuevo
                                         </Button>

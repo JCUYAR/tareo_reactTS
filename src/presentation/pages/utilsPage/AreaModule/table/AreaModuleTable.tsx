@@ -1,24 +1,25 @@
 import { useEffect, useState, type FC } from "react";
-import AreaModuleForm from "../form/AreaModuleForm";
 import TableComponent from "../../../../../shared/components/TableComponent";
 import { createColumnHelper, getCoreRowModel, useReactTable, type CellContext } from "@tanstack/react-table";
-import { Dropdown, DropdownButton } from "react-bootstrap";
 import type { PagedResponse } from "../../../../general/PagedResponse";
 import type { CatalogParams, ListCatalog } from "../../../../Lists/catalog.types";
 import { getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 
 
 interface AreaModuleTableProps {
     search: string;
     searchTrigger: number;
+    enableViewMode: () => void;
+    sendRegId: (id: string) => void;
 }
 
 const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
     search,
-    searchTrigger
+    searchTrigger,
+    enableViewMode,
+    sendRegId
 }) => {
-
-    const [getId, setGetID] = useState<string>("");
 
     const columnHelper = createColumnHelper<ListCatalog>();
 
@@ -71,58 +72,58 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
                 );
             },
         }),
-        // {
-        //     header: "Acción",
-        //     size: 70,
-        //     cell: (props: CellContext<ListCatalog, string>) => {
-        //         return (
-        //             <DropdownButton
-        //                 key={"start"}
-        //                 id={props.row.getValue("code")}
-        //                 drop={"end"}
-        //                 // as={ButtonGroup}
-        //                 variant="secondary"
-        //                 title={"Acción"}
-        //                 size="sm"
-        //                 style={{
-        //                     alignItems: "center",
-        //                     display: "flex",
-        //                     justifyContent: "center",
-        //                 }}
-        //                 className="c-btn"
-        //             >
-        //                 <Dropdown.Item
-        //                     onClick={() => {
-        //                         props.table.options.meta?.handlePreview(
-        //                             props.row.getValue("code")
-        //                         );
-        //                     }}
-        //                 >
-        //                     Visualizar
-        //                 </Dropdown.Item>
-        //                 <Dropdown.Item
-        //                     onClick={() => {
-        //                         props.table.options.meta?.handleEdit(
-        //                             props.row.getValue("code")
-        //                         );
-        //                     }}
-        //                 >
-        //                     Editar
-        //                 </Dropdown.Item>
-        //                 <Dropdown.Item
-        //                     onClick={() => {
-        //                         setGetID(props.row.getValue("code"))
-        //                         props.table.options.meta?.handleDelete(
-        //                             props.row.original.code
-        //                         );
-        //                     }}
-        //                 >
-        //                     Eliminar
-        //                 </Dropdown.Item>
-        //             </DropdownButton>
-        //         );
-        //     },
-        // },
+        {
+            header: "Acción",
+            size: 70,
+            cell: (props: CellContext<ListCatalog, string>) => {
+                return (
+                    <DropdownButton
+                        key={"start"}
+                        id={props.row.getValue("id")}
+                        drop={"end"}
+                        // as={ButtonGroup}
+                        variant="secondary"
+                        title={"Acción"}
+                        size="sm"
+                        style={{
+                            alignItems: "center",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}
+                        className="c-btn"
+                    >
+                        <Dropdown.Item
+                            onClick={() => {
+                                actionPreview(props.row.getValue("id"))
+
+                                
+                            }}
+                        >
+                            Visualizar
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            // onClick={() => {
+                            //     props.table.options.meta?.handleEdit(
+                            //         props.row.getValue("code")
+                            //     );
+                            // }}
+                        >
+                            Editar
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            // onClick={() => {
+                            //     setGetID(props.row.getValue("code"))
+                            //     props.table.options.meta?.handleDelete(
+                            //         props.row.original.code
+                            //     );
+                            // }}
+                        >
+                            Eliminar
+                        </Dropdown.Item>
+                    </DropdownButton>
+                );
+            },
+        },
     ];
 
     const actionEdit = async (code: string) => {
@@ -130,7 +131,8 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
     };
 
     const actionPreview = async (code: string) => {
-        // navigate(/archivos/ctcheq07/form?codeCta=${encodeURIComponent(code)}&edit=false); 
+        sendRegId(code);
+        enableViewMode();
     };
 
     const getList = (request: CatalogParams) => {

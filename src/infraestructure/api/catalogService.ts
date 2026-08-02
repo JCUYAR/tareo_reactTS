@@ -21,6 +21,21 @@ const getPagedListCategory = (
   );
 };
 
+const addAreaService = (payload: string) => {
+  const body = {
+    description: payload
+  }
+
+  const response = fetchData<boolean> (
+    "catalog/AddArea",
+    "POST",
+    body
+  );
+
+  return response;
+}
+
 export {
-    getPagedListCategory
+    getPagedListCategory,
+    addAreaService
 }

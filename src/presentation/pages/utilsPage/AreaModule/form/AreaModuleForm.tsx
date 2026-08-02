@@ -1,11 +1,27 @@
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import { useRef, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import type { UpdtAddArea } from "../../../../forms/areaForm.types";
 import { Button } from "react-bootstrap";
 import { isDiferent } from "../../../../../app/helpers/generalFunctions";
+import { addAreaService } from "../../../../../infraestructure/api/catalogService";
+import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
-const AreaModuleForm: FC = () => {
+interface AreaModuleFormProps {
+    onClose?: () => void;
+    onSearch: () => void;
+    viewModeMaster: boolean;
+    updateModeMaster: boolean;
+    regId: string;
+}
+
+const AreaModuleForm: FC<AreaModuleFormProps> = ({ 
+    onClose,
+    onSearch,
+    viewModeMaster,
+    updateModeMaster,
+    regId
+}) => {
 
     const formRefs = {
         id: useRef<HTMLInputElement>(null),
@@ -24,6 +40,8 @@ const AreaModuleForm: FC = () => {
         id: "",
         description: ""
     }
+
+    const { alertModal } = useAlertModal();
 
     const [initialState, setInitialState] = useState(areaFormType);
 
@@ -59,6 +77,56 @@ const AreaModuleForm: FC = () => {
                     } = values;
 
                     const isDirty = isDiferent(cleanInitial, cleanDataTemp);
+
+                    const handleOnClean = () => {
+                        if (!viewModeM && !updateModeM) {
+                            resetForm();
+                        } else if (!viewModeM && updateModeM) {
+                            resetForm();
+                        }  
+                    }
+
+                    const handleExit = () => {
+                        handleOnClean();
+                        setViewModeM(false);
+                        setUpdateModeM(false);
+                        onClose && onClose();
+                    }
+
+                    const addProccess = async () => {
+                        const body = {
+                            description: values.description
+                        };
+
+                        const add = await addAreaService(body.description);
+                        if (add.success) {
+                            alertModal("success", `Se ha creado una nueva área: ${body.description}`, () => {
+                                handleExit();
+                                onSearch && onSearch();
+                            });
+                        }
+                    }
+
+                    const handleSubmit= () => {
+                        if (!viewModeM && !updateModeM) {
+                            addProccess();
+                        }
+                    }
+
+                    useEffect(() => {
+                        if (viewModeMaster) {
+                            setViewModeM(viewModeMaster)
+                        }
+                        if (updateModeMaster) {
+                            setUpdateModeM(updateModeMaster)
+                        }
+                    }, [viewModeMaster, updateModeMaster])
+                    
+                    useEffect(() => {
+                        console.log("register id: ", regId)
+                        console.log("viewModeM: ", viewModeM);
+                        console.log("updateModeM: ", updateModeM);
+                    }, [viewModeM, updateModeM])
 
                     return (
                         <>
@@ -113,7 +181,7 @@ const AreaModuleForm: FC = () => {
                                                 className="btn btn-secondary"
                                                 disabled={!isDirty}
                                                 onClick={(event: any) => {
-                                                    // handleClean();
+                                                    handleOnClean();
                                                 }}
                                             >
                                                 {updateModeM ? "Reestablecer" : "Limpiar"}
@@ -122,7 +190,7 @@ const AreaModuleForm: FC = () => {
 
                                         <Button
                                             className="btn btn-success"
-                                            // onClick={onSubmit}
+                                            onClick={handleSubmit}
                                             disabled={(!viewModeM) && !isDirty}
                                         >
                                             {viewModeM ? "Editar" :
@@ -131,7 +199,7 @@ const AreaModuleForm: FC = () => {
 
                                         <Button
                                             className="btn btn-danger"
-                                        // onClick={handleClose}
+                                            onClick={handleExit}
                                         >
                                             Salir
                                         </Button>
