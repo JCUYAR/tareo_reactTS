@@ -5,7 +5,7 @@ import { fetchData } from "./fetchData"
 
 
 const listTareoByUser = (userId: number) => {
-    const response = fetchData<TareoResponse[]>(
+    const response = fetchData<BaseResult<TareoResponse[]>>(
         `tareo/ListTareoByUser/${userId}`,
         "GET"
     );
@@ -13,7 +13,7 @@ const listTareoByUser = (userId: number) => {
 }
 
 const listOneById = (id: number, userId: number) => {
-    const response = fetchData<TareoResponse>(
+    const response = fetchData<BaseResult<TareoResponse>>(
         `tareo/ListOneById/${id}&${userId}`,
         "GET"
     );
@@ -21,7 +21,7 @@ const listOneById = (id: number, userId: number) => {
 }
 
 const listCategory = () => {
-    const response = fetchData<SelectDto[]>(
+    const response = fetchData<BaseResult<SelectDto[]>>(
         `category/ListAllCategory`,
         "GET"
     );
@@ -29,7 +29,7 @@ const listCategory = () => {
 }
 
 const listArea = () => {
-    const response = fetchData<SelectDto[]>(
+    const response = fetchData<BaseResult<SelectDto[]>>(
         `catalog/ListAllArea`,
         "GET"
     );
@@ -37,7 +37,7 @@ const listArea = () => {
 }
 
 const listStatus = () => {
-    const response = fetchData<SelectDto[]>(
+    const response = fetchData<BaseResult<SelectDto[]>>(
         `catalog/ListAllStatus`,
         "GET"
     );
@@ -55,7 +55,7 @@ const addTareoService = (payload: AddTareo) => {
         start_time: payload.start_time,
         end_time: payload.end_time,
     }
-     const response = fetchData<void> (
+     const response = fetchData<BaseResult<void>> (
         "tareo/AddTareo",
         "POST",
         body
@@ -76,7 +76,7 @@ const updtTareoService = (payload: UpdtTareo) => {
         end_time: payload.end_time
     }
     
-    const response = fetchData<void> (
+    const response = fetchData<BaseResult<void>> (
         "tareo/UpdateTareo",
         "PUT",
         body

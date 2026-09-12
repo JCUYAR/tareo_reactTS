@@ -1,5 +1,6 @@
+import type { BaseResult } from "../../presentation/general/BaseResult";
 import type { PagedResponse } from "../../presentation/general/PagedResponse";
-import type { CatalogParams, ListCatalog } from "../../presentation/Lists/catalog.types";
+import type { CatalogParams, ListCatalog, ListOneCatalog } from "../../presentation/Lists/catalog.types";
 import { fetchData } from "./fetchData";
 
 const getPagedListCategory = (
@@ -26,7 +27,7 @@ const addAreaService = (payload: string) => {
     description: payload
   }
 
-  const response = fetchData<boolean> (
+  const response = fetchData<BaseResult<boolean>> (
     "catalog/AddArea",
     "POST",
     body
@@ -35,7 +36,16 @@ const addAreaService = (payload: string) => {
   return response;
 }
 
+const getOneById = (type: string, id: string) => {
+  const response = fetchData<BaseResult<ListOneCatalog[]>> (
+    `catalog/GetOneById/${type}&${id}`,
+    "GET"
+  );
+  return response;
+}
+
 export {
     getPagedListCategory,
-    addAreaService
+    addAreaService,
+    getOneById
 }

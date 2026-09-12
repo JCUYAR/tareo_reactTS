@@ -11,6 +11,7 @@ interface AreaModuleTableProps {
     search: string;
     searchTrigger: number;
     enableViewMode: () => void;
+    enableUpdateMode: () => void;
     sendRegId: (id: string) => void;
 }
 
@@ -18,6 +19,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
     search,
     searchTrigger,
     enableViewMode,
+    enableUpdateMode,
     sendRegId
 }) => {
 
@@ -102,11 +104,9 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
                             Visualizar
                         </Dropdown.Item>
                         <Dropdown.Item
-                            // onClick={() => {
-                            //     props.table.options.meta?.handleEdit(
-                            //         props.row.getValue("code")
-                            //     );
-                            // }}
+                            onClick={() => {
+                                actionEdit(props.row.getValue("id"));
+                            }}
                         >
                             Editar
                         </Dropdown.Item>
@@ -127,7 +127,8 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
     ];
 
     const actionEdit = async (code: string) => {
-        // navigate(/archivos/ctcheq07/form?codeCta=${encodeURIComponent(code)}&edit=true); 
+        sendRegId(code);
+        enableUpdateMode();
     };
 
     const actionPreview = async (code: string) => {

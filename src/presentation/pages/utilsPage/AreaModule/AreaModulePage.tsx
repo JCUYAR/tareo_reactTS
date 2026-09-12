@@ -21,6 +21,14 @@ const AreaModule: FC = () => {
         })
     }
 
+    const enableUpdateMode = () => {
+        setViewModeM(false);
+        setUpdateModeM(true);
+        requestAnimationFrame(() => {
+            setShowForm(true);
+        })
+    }
+
     return (
         <div className="d-flex align-items-stretch" style={{ overflow: "hidden" }}>
 
@@ -74,6 +82,7 @@ const AreaModule: FC = () => {
                     searchTrigger={searchTrigger}
                     enableViewMode={enableViewMode}
                     sendRegId={setReceiveRegId}
+                    enableUpdateMode={enableUpdateMode} 
                 />
             </div>
 

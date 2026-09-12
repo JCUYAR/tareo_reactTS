@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { LoginFormInterface } from '../../forms/loginForm.types';
 import '../../../app/styles/loginStyles.css';
 import Icon from '../../../shared/ui/Icon';

@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "../../presentation/pages/loginPage/loginPage";
-import GeneralPage from "../../presentation/pages/generalPage/generalPage";
 import PrivateRoute from "./PrivateRouter";
 import AppLayout from "../toolbar/Applayout";
 

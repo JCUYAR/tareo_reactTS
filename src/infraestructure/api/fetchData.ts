@@ -2,9 +2,9 @@ import axios, {type Method, type AxiosRequestConfig} from "axios";
 import type { BaseResult } from "../../presentation/general/BaseResult";
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http:localjost;6767",
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
     timeout: 10000,
-    headers : {
+    headers: {
         'Content-Type': 'application/json'
     }
 });
@@ -50,19 +50,18 @@ axiosInstance.interceptors.response.use(
 // }
 
 export async function fetchData<T>(
-    url: string,
-    method: Method,
-    data?: any,
-    config?: AxiosRequestConfig
+  url: string,
+  method: Method,
+  data?: any,
+  config?: AxiosRequestConfig
 ): Promise<T> {
+  const response = await axiosInstance.request<T>({
+    url,
+    method,
+    data: method !== "GET" ? data : undefined,
+    params: method === "GET" ? data : undefined,
+    ...config,
+  });
 
-    const response = await axiosInstance.request<T>({
-        url,
-        method,
-        data: method !== "GET" ? data : undefined,
-        params: method === "GET" ? data : undefined,
-        ...config,
-    });
-
-    return response.data;
+  return response.data;
 }

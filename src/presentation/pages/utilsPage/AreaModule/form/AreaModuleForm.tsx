@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FC } from "react";
 import type { UpdtAddArea } from "../../../../forms/areaForm.types";
 import { Button } from "react-bootstrap";
 import { isDiferent } from "../../../../../app/helpers/generalFunctions";
-import { addAreaService } from "../../../../../infraestructure/api/catalogService";
+import { addAreaService, getOneById } from "../../../../../infraestructure/api/catalogService";
 import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
 interface AreaModuleFormProps {
@@ -15,7 +15,7 @@ interface AreaModuleFormProps {
     regId: string;
 }
 
-const AreaModuleForm: FC<AreaModuleFormProps> = ({ 
+const AreaModuleForm: FC<AreaModuleFormProps> = ({
     onClose,
     onSearch,
     viewModeMaster,
@@ -82,8 +82,9 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                         if (!viewModeM && !updateModeM) {
                             resetForm();
                         } else if (!viewModeM && updateModeM) {
-                            resetForm();
-                        }  
+                            setFieldValue("id", initialState.id);
+                            setFieldValue("description", initialState.description);
+                        }
                     }
 
                     const handleExit = () => {
@@ -107,11 +108,22 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                         }
                     }
 
-                    const handleSubmit= () => {
+                    const handleSubmit = () => {
                         if (!viewModeM && !updateModeM) {
                             addProccess();
+                        } else if (viewModeM && !updateModeM) {
+                            setViewModeM(false);
+                            setUpdateModeM(true);
                         }
                     }
+
+                    const visualizeArea = async () => {
+                        const getViewReg = await getOneById("1", regId);
+                        setInitialState(getViewReg.data[0]);
+                        setFieldValue("id", getViewReg.data[0].id);
+                        setFieldValue("description", getViewReg.data[0].description);   
+                    }
+                    
 
                     useEffect(() => {
                         if (viewModeMaster) {
@@ -121,12 +133,17 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                             setUpdateModeM(updateModeMaster)
                         }
                     }, [viewModeMaster, updateModeMaster])
-                    
+
                     useEffect(() => {
-                        console.log("register id: ", regId)
-                        console.log("viewModeM: ", viewModeM);
-                        console.log("updateModeM: ", updateModeM);
-                    }, [viewModeM, updateModeM])
+                        if ((viewModeM && !updateModeM)) {
+                            visualizeArea();
+                        } else if (!viewModeM && updateModeM) {
+                            visualizeArea();
+                        }
+                            // console.log("register id: ", regId)
+                            // console.log("viewModeM: ", viewModeM);
+                            // console.log("updateModeM: ", updateModeM);
+                        }, [viewModeM, updateModeM])
 
                     return (
                         <>
@@ -137,7 +154,7 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                                             (!viewModeM && updateModeM) ? `Actualización de área` : "")}
                                 </h5>
                                 <form
-                                    style={{textAlign: "left"}}
+                                    style={{ textAlign: "left" }}
                                 >
                                     {(updateModeM || viewModeM) && (
                                         <div className="row mb-3">

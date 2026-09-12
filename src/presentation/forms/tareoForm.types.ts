@@ -1,3 +1,5 @@
+import type { UserData } from "./loginForm.types";
+
 export interface TareoResponse {
     id: string;
     tareoCode: string;
@@ -24,6 +26,7 @@ export interface UpdtAddTareo {
     start_time: string;
     end_time: string;
     total_hours: string | null;
+    userData?: UserData;
 }
 
 export interface AddTareo {

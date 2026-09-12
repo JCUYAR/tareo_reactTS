@@ -12,3 +12,8 @@ export interface CatalogParams extends PagedParams {
     type: string;
     description: string;
 }
+
+export interface ListOneCatalog {
+    id: string;
+    description: string;
+}
