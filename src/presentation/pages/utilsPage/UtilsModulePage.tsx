@@ -17,12 +17,14 @@ const UtilsModulePage: FC = () => {
 
                     >
                         <Tab eventKey="area" title="Area" />
-                        <Tab eventKey="categoria" title="Categoría" />
+                        <Tab eventKey="status" title="Estado" />
+                        <Tab eventKey="categoria" title="Categoría" /> 
                     </Tabs>
 
                     {/* CONTENEDOR ÚNICO */}
                     <div className="tab-content-box">
                         {activeTab === "area" && <AreaModule />}
+                        {activeTab === "status" && <AreaModule mantType="status"/>}
                         {/* {activeTab === "categoria" && <Categoria />} */}
                     </div>
                  </div>

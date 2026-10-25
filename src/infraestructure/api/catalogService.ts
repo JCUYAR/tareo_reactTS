@@ -36,6 +36,49 @@ const addAreaService = (payload: string) => {
   return response;
 }
 
+const updateAreaService = (id: number, description: string) => {
+  const body = {
+    id: id,
+    description: description
+  }
+
+  const response = fetchData<BaseResult<boolean>> (
+    "catalog/UpdateArea",
+    "PUT",
+    body
+  );
+
+  return response;
+}
+
+const deleteAreaService = (id: number) => {
+  const body = {
+    id: id
+  }
+
+  const response = fetchData<BaseResult<boolean>> (
+    "catalog/DeleteArea",
+    "DELETE",
+    body
+  );
+
+  return response;
+}
+
+const addStatusService = (payload: string) => {
+  const body = {
+    description: payload
+  }
+
+  const response = fetchData<BaseResult<boolean>> (
+    "catalog/AddStatus",
+    "POST",
+    body
+  );
+
+  return response;
+}
+
 const getOneById = (type: string, id: string) => {
   const response = fetchData<BaseResult<ListOneCatalog[]>> (
     `catalog/GetOneById/${type}&${id}`,
@@ -47,5 +90,8 @@ const getOneById = (type: string, id: string) => {
 export {
     getPagedListCategory,
     addAreaService,
+    updateAreaService,
+    deleteAreaService,
+    addStatusService,
     getOneById
 }

@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 
 
 interface AreaModuleFilterProps {
+    mantType?: string;
     sendSearchFilter: (param: string) => void;
     onSearch: () => void;
     onNew: () => void;
@@ -14,6 +15,7 @@ interface initValues {
 }
 
 const AreaModuleFilter: React.FC<AreaModuleFilterProps> = ({
+    mantType,
     sendSearchFilter,
     onSearch,
     onNew
@@ -27,6 +29,9 @@ const AreaModuleFilter: React.FC<AreaModuleFilterProps> = ({
     }
 
     const [initialState, setInitalState] = useState(initialValues)
+    
+    const dataType = (mantType == "status" ? "2" : "1")
+    const dataTypeTitle = dataType == "1" ? "área" : "estado"
 
     return (
         <>
@@ -57,7 +62,7 @@ const AreaModuleFilter: React.FC<AreaModuleFilterProps> = ({
                                             htmlFor="search"
                                             className="form-label fw-semibold"
                                         >
-                                            Buscar área por descripción
+                                            {`Buscar ${dataTypeTitle} por descripción`}
                                         </label>
 
                                         <Field

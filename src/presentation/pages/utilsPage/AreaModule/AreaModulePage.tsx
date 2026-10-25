@@ -3,7 +3,13 @@ import AreaModuleForm from "./form/AreaModuleForm";
 import AreaModuleTable from "./table/AreaModuleTable";
 import AreaModuleFilter from "./filter/AreaModuleFilter";
 
-const AreaModule: FC = () => {
+interface AreaModuleProps {
+    mantType?: string;
+}
+
+const AreaModule: FC<AreaModuleProps> = ({
+    mantType
+}) => {
 
     const [searchParam, setSearchParam] = useState("");
     const [receiveRegId, setReceiveRegId] = useState("");
@@ -44,7 +50,8 @@ const AreaModule: FC = () => {
                 }}
             >
                 <div style={{ minWidth: "300px" }}>
-                    <AreaModuleForm 
+                    <AreaModuleForm
+                        mantType={mantType}
                         onClose={() => {
                             setShowForm(false);
                             setViewModeM(false);
@@ -72,12 +79,14 @@ const AreaModule: FC = () => {
             <div style={{ flex: "1 1 auto", minWidth: 0 }}>
                 <div className="col-12">
                     <AreaModuleFilter
+                        mantType={mantType}
                         sendSearchFilter={setSearchParam}
                         onSearch={() => setSearchTrigger((x) => x + 1)}
                         onNew={() => setShowForm(true)}
                     />
                 </div>
                 <AreaModuleTable
+                    mantType={mantType}
                     search={searchParam}
                     searchTrigger={searchTrigger}
                     enableViewMode={enableViewMode}
