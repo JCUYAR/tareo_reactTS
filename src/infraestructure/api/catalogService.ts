@@ -79,6 +79,35 @@ const addStatusService = (payload: string) => {
   return response;
 }
 
+const updateStatusService = (id: number, description: string) => {
+  const body = {
+    id: id,
+    description: description
+  }
+
+  const response = fetchData<BaseResult<boolean>> (
+    "catalog/UpdateStatus",
+    "PUT",
+    body
+  );
+
+  return response;
+}
+
+const deleteStatusService = (id: number) => {
+  const body = {
+    id: id
+  }
+
+  const response = fetchData<BaseResult<boolean>> (
+    "catalog/DeleteStatus",
+    "DELETE",
+    body
+  );
+
+  return response;
+}
+
 const getOneById = (type: string, id: string) => {
   const response = fetchData<BaseResult<ListOneCatalog[]>> (
     `catalog/GetOneById/${type}&${id}`,
@@ -93,5 +122,7 @@ export {
     updateAreaService,
     deleteAreaService,
     addStatusService,
+    updateStatusService,
+    deleteStatusService,
     getOneById
 }

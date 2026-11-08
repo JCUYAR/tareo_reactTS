@@ -3,7 +3,7 @@ import TableComponent from "../../../../../shared/components/TableComponent";
 import { createColumnHelper, getCoreRowModel, useReactTable, type CellContext } from "@tanstack/react-table";
 import type { PagedResponse } from "../../../../general/PagedResponse";
 import type { CatalogParams, ListCatalog } from "../../../../Lists/catalog.types";
-import { deleteAreaService, getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
+import { deleteAreaService, deleteStatusService, getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
@@ -150,20 +150,43 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
     };
 
     const deleteArea = (code: string) => {
-        deleteAreaService(parseInt(code)).then((response) => {
-            if (response.success) {
-                alertModal("success", "Registro eliminado satisfactoriamente", () => {
-                    getList({
-                        pageNumber: pagination.pageIndex + 1,
-                        pageSize: pagination.pageSize,
-                        type: dataType,
-                        description: search
-                    });
+
+        switch (dataType) {
+            case "1":
+                deleteAreaService(parseInt(code)).then((response) => {
+                    if (response.success) {
+                        alertModal("success", "Registro eliminado satisfactoriamente", () => {
+                            getList({
+                                pageNumber: pagination.pageIndex + 1,
+                                pageSize: pagination.pageSize,
+                                type: dataType,
+                                description: search
+                            });
+                        })
+                    } else {
+                        alertModal("error", "Ha ocurrido un error al eliminar el registro")
+                    }
                 })
-            } else {
-                alertModal("error", "Ha ocurrido un error al eliminar el registro")
-            }
-        })
+                break;
+
+            case "2":
+                deleteStatusService(parseInt(code)).then((response) => {
+                    if (response.success) {
+                        alertModal("success", "Registro eliminado satisfactoriamente", () => {
+                            getList({
+                                pageNumber: pagination.pageIndex + 1,
+                                pageSize: pagination.pageSize,
+                                type: dataType,
+                                description: search
+                            });
+                        })
+                    } else {
+                        alertModal("error", "Ha ocurrido un error al eliminar el registro")
+                    }
+                })
+                break;
+        }
+        
     }
 
     const table = useReactTable({

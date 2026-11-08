@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FC } from "react";
 import type { UpdtAddArea } from "../../../../forms/areaForm.types";
 import { Button } from "react-bootstrap";
 import { isDiferent } from "../../../../../app/helpers/generalFunctions";
-import { addAreaService, addStatusService, getOneById, updateAreaService } from "../../../../../infraestructure/api/catalogService";
+import { addAreaService, addStatusService, getOneById, updateAreaService, updateStatusService } from "../../../../../infraestructure/api/catalogService";
 import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
 interface AreaModuleFormProps {
@@ -137,13 +137,30 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                             description: values.description
                         };
 
-                        const update = await updateAreaService(parseInt(body.id), body.description);
-                        if (update.success) {
-                            alertModal("success", `Se ha actualizado el registro de área`, () => {
-                                handleExit();
-                                onSearch && onSearch();
-                            });
+                        switch (dataType) {
+                            case "1":
+                                updateAreaService(parseInt(body.id), body.description).then((updt) => {
+                                    if (updt.success) {
+                                        alertModal("success", `Se ha actualizado el registro de área`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
+
+                            case "2":
+                                updateStatusService(parseInt(body.id), body.description).then((updt) => {
+                                    if (updt.success) {
+                                        alertModal("success", `Se ha actualizado el registro de estado`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
                         }
+
                     }
 
                     const handleSubmit = () => {
