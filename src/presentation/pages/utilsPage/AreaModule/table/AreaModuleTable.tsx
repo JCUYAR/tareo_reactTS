@@ -3,11 +3,13 @@ import TableComponent from "../../../../../shared/components/TableComponent";
 import { createColumnHelper, getCoreRowModel, useReactTable, type CellContext } from "@tanstack/react-table";
 import type { PagedResponse } from "../../../../general/PagedResponse";
 import type { CatalogParams, ListCatalog } from "../../../../Lists/catalog.types";
-import { getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
+import { deleteAreaService, deleteStatusService, getPagedListCategory } from "../../../../../infraestructure/api/catalogService";
 import { Dropdown, DropdownButton } from "react-bootstrap";
+import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
 
 interface AreaModuleTableProps {
+    mantType?: string;
     search: string;
     searchTrigger: number;
     enableViewMode: () => void;
@@ -16,6 +18,7 @@ interface AreaModuleTableProps {
 }
 
 const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
+    mantType,
     search,
     searchTrigger,
     enableViewMode,
@@ -24,6 +27,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
 }) => {
 
     const columnHelper = createColumnHelper<ListCatalog>();
+    const { alertModal } = useAlertModal();
 
     const [responseInfo, setResponseInfo] = useState<PagedResponse<ListCatalog[]>>();
 
@@ -31,6 +35,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
 
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10, });
 
+    const dataType = (mantType == "status" ? "2" : "1")
     const columns = [
         columnHelper.accessor("id", {
             header: "ID",
@@ -98,7 +103,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
                             onClick={() => {
                                 actionPreview(props.row.getValue("id"))
 
-                                
+
                             }}
                         >
                             Visualizar
@@ -111,12 +116,12 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
                             Editar
                         </Dropdown.Item>
                         <Dropdown.Item
-                            // onClick={() => {
-                            //     setGetID(props.row.getValue("code"))
-                            //     props.table.options.meta?.handleDelete(
-                            //         props.row.original.code
-                            //     );
-                            // }}
+                        onClick={() => {
+                            // setGetID(props.row.getValue("code"))
+                            deleteArea(
+                                props.row.original.id
+                            );
+                        }}
                         >
                             Eliminar
                         </Dropdown.Item>
@@ -144,6 +149,46 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
         });
     };
 
+    const deleteArea = (code: string) => {
+
+        switch (dataType) {
+            case "1":
+                deleteAreaService(parseInt(code)).then((response) => {
+                    if (response.success) {
+                        alertModal("success", "Registro eliminado satisfactoriamente", () => {
+                            getList({
+                                pageNumber: pagination.pageIndex + 1,
+                                pageSize: pagination.pageSize,
+                                type: dataType,
+                                description: search
+                            });
+                        })
+                    } else {
+                        alertModal("error", "Ha ocurrido un error al eliminar el registro")
+                    }
+                })
+                break;
+
+            case "2":
+                deleteStatusService(parseInt(code)).then((response) => {
+                    if (response.success) {
+                        alertModal("success", "Registro eliminado satisfactoriamente", () => {
+                            getList({
+                                pageNumber: pagination.pageIndex + 1,
+                                pageSize: pagination.pageSize,
+                                type: dataType,
+                                description: search
+                            });
+                        })
+                    } else {
+                        alertModal("error", "Ha ocurrido un error al eliminar el registro")
+                    }
+                })
+                break;
+        }
+        
+    }
+
     const table = useReactTable({
         data: responseInfo?.data || [],
         columns,
@@ -158,7 +203,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
                 actionEdit(code)
             },
             handleDelete: (code: string) => {
-                // handleDeleteAction1(code);
+                deleteArea(code);
             },
             handleSelect: (id: string) => { },
             handlePreview: (code: string) => {
@@ -174,7 +219,7 @@ const AreaModuleTable: React.FC<AreaModuleTableProps> = ({
         getList({
             pageNumber: pagination.pageIndex + 1,
             pageSize: pagination.pageSize,
-            type: "1",
+            type: dataType,
             description: search
         });
     }, [searchTrigger, pagination]);

@@ -4,10 +4,11 @@ import { useEffect, useRef, useState, type FC } from "react";
 import type { UpdtAddArea } from "../../../../forms/areaForm.types";
 import { Button } from "react-bootstrap";
 import { isDiferent } from "../../../../../app/helpers/generalFunctions";
-import { addAreaService, getOneById } from "../../../../../infraestructure/api/catalogService";
+import { addAreaService, addStatusService, getOneById, updateAreaService, updateStatusService } from "../../../../../infraestructure/api/catalogService";
 import { useAlertModal } from "../../../../../app/providers/AlertModalContext";
 
 interface AreaModuleFormProps {
+    mantType?: string;
     onClose?: () => void;
     onSearch: () => void;
     viewModeMaster: boolean;
@@ -16,6 +17,7 @@ interface AreaModuleFormProps {
 }
 
 const AreaModuleForm: FC<AreaModuleFormProps> = ({
+    mantType,
     onClose,
     onSearch,
     viewModeMaster,
@@ -47,6 +49,9 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
 
     const [viewModeM, setViewModeM] = useState<boolean>(false);
     const [updateModeM, setUpdateModeM] = useState<boolean>(false);
+
+    const dataType = (mantType == "status" ? "2" : "1")
+    const dataTypeTitle = dataType == "1" ? "área" : "estado"
 
     return (
         <>
@@ -99,13 +104,63 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                             description: values.description
                         };
 
-                        const add = await addAreaService(body.description);
-                        if (add.success) {
-                            alertModal("success", `Se ha creado una nueva área: ${body.description}`, () => {
-                                handleExit();
-                                onSearch && onSearch();
-                            });
+                        switch (dataType) {
+                            case "1":
+                                addAreaService(body.description).then((add) => {
+                                    if (add.success) {
+                                        alertModal("success", `Se ha creado una nueva área: ${body.description}`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
+
+                            case "2":
+                                addStatusService(body.description).then((add) => {
+                                    if (add.success) {
+                                        alertModal("success", `Se ha creado un nuevo estado: ${body.description}`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
                         }
+
+
+                    }
+
+                    const updateProccess = async () => {
+                        const body = {
+                            id: values.id,
+                            description: values.description
+                        };
+
+                        switch (dataType) {
+                            case "1":
+                                updateAreaService(parseInt(body.id), body.description).then((updt) => {
+                                    if (updt.success) {
+                                        alertModal("success", `Se ha actualizado el registro de área`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
+
+                            case "2":
+                                updateStatusService(parseInt(body.id), body.description).then((updt) => {
+                                    if (updt.success) {
+                                        alertModal("success", `Se ha actualizado el registro de estado`, () => {
+                                            handleExit();
+                                            onSearch && onSearch();
+                                        });
+                                    }
+                                });
+                                break;
+                        }
+
                     }
 
                     const handleSubmit = () => {
@@ -114,16 +169,18 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                         } else if (viewModeM && !updateModeM) {
                             setViewModeM(false);
                             setUpdateModeM(true);
+                        } else if (!viewModeM && updateModeM) {
+                            updateProccess();
                         }
                     }
 
                     const visualizeArea = async () => {
-                        const getViewReg = await getOneById("1", regId);
+                        const getViewReg = await getOneById(dataType, regId);
                         setInitialState(getViewReg.data[0]);
                         setFieldValue("id", getViewReg.data[0].id);
-                        setFieldValue("description", getViewReg.data[0].description);   
+                        setFieldValue("description", getViewReg.data[0].description);
                     }
-                    
+
 
                     useEffect(() => {
                         if (viewModeMaster) {
@@ -140,18 +197,18 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                         } else if (!viewModeM && updateModeM) {
                             visualizeArea();
                         }
-                            // console.log("register id: ", regId)
-                            // console.log("viewModeM: ", viewModeM);
-                            // console.log("updateModeM: ", updateModeM);
-                        }, [viewModeM, updateModeM])
+                        // console.log("register id: ", regId)
+                        // console.log("viewModeM: ", viewModeM);
+                        // console.log("updateModeM: ", updateModeM);
+                    }, [viewModeM, updateModeM])
 
                     return (
                         <>
                             <div className="p-4">
                                 <h5>
-                                    {(!viewModeM && !updateModeM ? "Registro de nueva área" :
-                                        (viewModeM && !updateModeM) ? `Visualización de área` :
-                                            (!viewModeM && updateModeM) ? `Actualización de área` : "")}
+                                    {(!viewModeM && !updateModeM ? `Registro de ${dataTypeTitle}` :
+                                        (viewModeM && !updateModeM) ? `Visualización de ${dataTypeTitle}` :
+                                            (!viewModeM && updateModeM) ? `Actualización de ${dataTypeTitle}` : "")}
                                 </h5>
                                 <form
                                     style={{ textAlign: "left" }}
@@ -182,7 +239,7 @@ const AreaModuleForm: FC<AreaModuleFormProps> = ({
                                                     className={`form-control small-input ${errors.description ? "is-invalid" : ""
                                                         }`}
                                                     disabled={viewModeM}
-                                                    placeholder="Ingrese descripción área"
+                                                    placeholder={`Ingrese descripción ${dataTypeTitle}`}
                                                     autoFocuss
                                                 />
                                                 {errors.description && (
